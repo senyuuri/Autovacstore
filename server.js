@@ -45,9 +45,10 @@ var OpenshiftApp = function() {
     };
 
 
-    /**
+    /**  TODO
      *  Populate the cache.
-     */
+     *
+
     self.populateCache = function() {
         if (typeof self.zcache === "undefined") {
             self.zcache = { 'index.html': '' };
@@ -111,7 +112,7 @@ var OpenshiftApp = function() {
        
         connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
             if (err) throw err;
-            console.log('The solution is: ', rows[0].solution);
+            console.log('The solution is: ',、 rows[0].solution);
         });
     };
     
@@ -146,7 +147,7 @@ var OpenshiftApp = function() {
     self.initialize = function() {
         console.log(">>>>>>>>>> Fn(initialize) start >>>>>>>>>>");
         self.setupVariables();
-        self.populateCache();
+        //self.populateCache();
         self.setupTerminationHandlers();
 
         // Create the express server and routes.
