@@ -1,21 +1,32 @@
 #!/bin/env node
-//  OpenShift sample Node application
+// TODO 
+/* nodetime NOT compatible with node v0.12
+var nodetime = require('nodetime').profile({
+    accountKey: 'db80fdbd62208b6155d385333d35bcc0aa03686f', 
+    appName: 'Node.js Application'
+});
+*/
 var express = require('express');
 var fs      = require('fs');
+var jade    = require('jade');
+var path    = require('path');
+var mysql   = require('mysql');
+var bodyParser = require('body-parser');
+var connection = mysql.createConnection({
+  host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
+  port     : process.env.OPENSHIFT_MYSQL_DB_PORT,
+  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME,
+  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD
+});
 
+/* ================================================================  */
+/*  Server initialisation. (DO NOT MODIFY)                           */
+/*  ================================================================ */
 
-/**
- *  Define the sample application.
- */
-var SampleApp = function() {
+var OpenshiftApp = function() {
 
     //  Scope.
     var self = this;
-
-
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
 
     /**
      *  Set up server IP address and port # using env variables/defaults.
@@ -84,41 +95,48 @@ var SampleApp = function() {
         });
     };
 
-
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
-
     /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
+    *  Create database connection.
+    */
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
+    self.connectDB = function() {
+        connection.connect(function(err) {
+            if (err) {
+                console.error('error connecting: ' + err.stack);
+                return;
+            }
 
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
+            console.log('connected as id ' + connection.threadId);
+        });
+       
+        connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+            if (err) throw err;
+            console.log('The solution is: ', rows[0].solution);
+        });
     };
-
+    
+    
 
     /**
      *  Initialize the server (express) and create the routes and register
      *  the handlers.
      */
     self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
+        //self.createRoutes();
+        self.app = express();
+        //  Set view engine as jade
+        self.app.set('views', path.join(__dirname, 'views'));
+        self.app.set('view engine', 'jade');
+        // TEST
+        // Using separate js files under "/routes"
 
         //  Add handlers for the app (from the routes).
+        /*
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
+        */
+        self.connectDB();
     };
 
 
@@ -126,6 +144,7 @@ var SampleApp = function() {
      *  Initializes the sample application.
      */
     self.initialize = function() {
+        console.log(">>>>>>>>>> Fn(initialize) start >>>>>>>>>>");
         self.setupVariables();
         self.populateCache();
         self.setupTerminationHandlers();
@@ -145,15 +164,79 @@ var SampleApp = function() {
                         Date(Date.now() ), self.ipaddress, self.port);
         });
     };
+};   
 
-};   /*  Sample Application.  */
 
+
+/* ================================================================  */
+/*  Database Handlers                                                */
+/*  ================================================================ */
+
+var DBHandler = function() {
+    //  Scope.
+    var self = this;
+
+    self.add_staff = function(username, password){
+        next();
+    }
+};
+
+
+
+
+/* ================================================================  */
+/*  main():  Main code.                                              */
+/*  ================================================================ */
+
+/**
+ *  Start server.
+ */
+var osapp = new OpenshiftApp();
+osapp.initialize();
+osapp.start();
+
+var adminPanel = require('./routes/admin_panel');
+var addStaff = require('./routes/add_staff')
+var delivery_sys = require('./routes/delivery_sys');
+
+osapp.app.use('/', adminPanel);
+osapp.app.use('/addstaff', addStaff);
+osapp.app.use('/mobile', delivery_sys);
 
 
 /**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
+var routes = {};
+var router = express.Router();
 
+
+
+ *  MAIN APP LOGIC
+ */
+/**
+ *  Create the routing table entries + handlers for the application.
+ */
+ /*
+
+routes['index'] = function(req, res){
+    res.render('index', { title: 'Express' });
+};
+
+osapp.app.get('/', routes['index']);
+
+
+
+
+routes['add_staff'] = function(req, res){
+    res.render('add_staff', { title: 'Autovacstore'});
+};
+
+osapp.app.get('/add_staff', routes['add_staff']);
+
+*/
+/*
+router.route('/')
+.get(function(req, res, next) {
+  res.render('index', { title: 'Express' });
+});
+
+*/
