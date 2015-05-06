@@ -202,7 +202,7 @@ osapp.start();
 var overview = require('./routes/overview');
 // var login = require('./routes/login');
 // var settings = require('./routes/settings');
-var addOrder = require('./routes/addorder');
+var addOrder = require('./routes/addOrder');
 var undelivered = require('./routes/undelivered');
 // var delivered = require('./routes/delivered');
 // var staff = require('./routes/staff');
