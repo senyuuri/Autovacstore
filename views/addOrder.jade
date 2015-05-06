@@ -1,0 +1,35 @@
+extends layout
+
+block content
+
+	div(class='container')
+		div(class="page-header")
+			h1 Add Order
+		form(class="form-group",method="POST")
+			div(class="panel panel-default")
+				div(class="panel-heading")
+					h2(class='panel-title') Select Items
+				div(class="panel-body")
+					p form
+
+			div(class="panel panel-default")
+				div(class="panel-heading")
+					h2(class='panel-title') Select Delivery Staff
+				div(class="panel-body")
+					p form
+
+			div(class="panel panel-default")
+				div(class="panel-heading")
+					h2(class='panel-title') Customer Information
+				div(class="panel-body")
+					div(class="form-group")
+						label(for="realname",class="control-label") Name
+						input(type="text",class="form-control",name="realname",placeholder="",id='realname')
+					div(class="form-group")
+						label(class="control-label",for='contact') Contact Number
+						input(type="text",class="form-control",name="realname",placeholder="",id='contact')
+					div(class="form-group")
+						label(for="address",class="control-label") Address
+						textarea(class="form-control",rows="3", name="remarks",id='address')
+
+			button(type="submit",class="btn btn-default",value="Submit") Submit

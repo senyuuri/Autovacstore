@@ -23,10 +23,11 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
 
 exports.addStaff = function(username,password,privilege){
     connection.query('INSERT INTO staffs VALUES (?)', [username,password,privilege], function(err, results){
-        if                              AAAaaAA
-        if                              AAAaaAA
-        if                              AAAaaAA
-        if                              AAAaaAA    
+    })
+};
+
+exports.queryStaff = function(username){
+    connection.query('SELECT * FROM staffs WHERE username=(?)', [username] function(err, results){
     })
 };
 

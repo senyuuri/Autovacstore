@@ -13,11 +13,12 @@ var path    = require('path');
 var mysql   = require('mysql');
 var bodyParser = require('body-parser');
 var connection = mysql.createConnection({
-  host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
-  port     : process.env.OPENSHIFT_MYSQL_DB_PORT,
-  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME,
-  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD
+  host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
+  port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
+  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'admin9dbD4cT',
+  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'e3lc8i8ftG4F'
 });
+
 
 /* ================================================================  */
 /*  Server initialisation. (DO NOT MODIFY)                           */
@@ -34,7 +35,7 @@ var OpenshiftApp = function() {
     self.setupVariables = function() {
         //  Set the environment variables we need.
         self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8090;
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -127,6 +128,7 @@ var OpenshiftApp = function() {
         self.app = express();
         //  Set view engine as jade
         self.app.set('views', path.join(__dirname, 'views'));
+        self.app.set('styles', path.join(__dirname, 'styles'));
         self.app.set('view engine', 'jade');
         // TEST
         // Using separate js files under "/routes"
@@ -196,48 +198,25 @@ var osapp = new OpenshiftApp();
 osapp.initialize();
 osapp.start();
 
-var adminPanel = require('./routes/admin_panel');
-var addStaff = require('./routes/add_staff')
-var delivery_sys = require('./routes/delivery_sys');
 
-osapp.app.use('/', adminPanel);
-osapp.app.use('/addstaff', addStaff);
-osapp.app.use('/mobile', delivery_sys);
-
-
-/**
-var routes = {};
-var router = express.Router();
+var overview = require('./routes/overview');
+// var login = require('./routes/login');
+// var settings = require('./routes/settings');
+var addOrder = require('./routes/addorder');
+var undelivered = require('./routes/undelivered');
+// var delivered = require('./routes/delivered');
+// var staff = require('./routes/staff');
+// var products = require('./routes/products');
 
 
 
- *  MAIN APP LOGIC
- */
-/**
- *  Create the routing table entries + handlers for the application.
- */
- /*
-
-routes['index'] = function(req, res){
-    res.render('index', { title: 'Express' });
-};
-
-osapp.app.get('/', routes['index']);
+osapp.app.use('/', overview);
+//osapp.app.use('/login',login);
+//osapp.app.use('/settings',settings);
+osapp.app.use('/addOrder', addOrder);
+osapp.app.use('/undelivered',undelivered);
+// osapp.app.use('/delivered',delivered);
+// osapp.app.use('/staff',staff);
+// osapp.app.use('/products',products);
 
 
-
-
-routes['add_staff'] = function(req, res){
-    res.render('add_staff', { title: 'Autovacstore'});
-};
-
-osapp.app.get('/add_staff', routes['add_staff']);
-
-*/
-/*
-router.route('/')
-.get(function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-*/

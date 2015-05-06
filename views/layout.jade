@@ -3,28 +3,47 @@ html
 	head
 		title= title
 		link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
+		link(rel='stylesheet' href='http://getbootstrap.com/examples/dashboard/dashboard.css')
 		script(src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js")
 		script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
 	body
-		div(class='navbar navbar-inverse navbar-static-top')
+		div(class='navbar navbar-inverse navbar-fixed-top')
 			div(class='container-fluid')
 				div(class='navbar-header')
-					button(type='button',class='navbar-toggle collapsed',data-toggle='collapse',data-target='#navbar-collapse-8')
+					button(type='button',class='navbar-toggle collapsed',data-toggle='collapse',data-target='#navbar')
 						span(class='sr-only') Toggle navigation
 						span(class='icon-bar')
 						span(class='icon-bar')
 						span(class='icon-bar')
 					a(class='navbar-brand' href='/') Autovacstore
-				div(class='collapse navbar-collapse',id='navbar-collapse-8')
-					ul(class='nav navbar-nav')
-						li(class='active')
-							a(href='/') Status
+				div(class='collapse navbar-collapse',id='navbar')
+					ul(class='nav navbar-nav navbar-right')
 						li
-							a(href='/addOrder') Add Order
+							a(href='/settings') Settings
 						li
-							a(href='/addStaff') Staff Registration
+							a(href='/logout') Logout
+					form(class='navbar-form navbar-right')
+						input(type="text",class="form-control",placeholder="Search...")
+		//TODO: Highlight current page
+		div(class='container-fluid')
+			div(class='row')
+				div(class="col-sm-3 col-md-2 sidebar")
+					ul(class="nav nav-sidebar")
+						li(class="active")
+							a(href="/") Overview 
+								span(class="sr-only") (Current)
 						li
-							a(href='/addInvoice') Invoice
+							a(href="/addorder") Add Order
 						li
-							a(href='/postmanPanel') Postman Panel
-		block content
+							a(href="/undelivered") Undelivered
+						li
+							a(href="/delivered") Delivered
+						li
+							a(href="/staffs") Staff
+						li
+							a(href="/products") Products
+			div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
+				block content
+
+
+

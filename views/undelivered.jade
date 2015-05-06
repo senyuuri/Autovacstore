@@ -1,0 +1,56 @@
+extends layout
+
+block content
+
+	//
+		div(class='container')
+			div(class='panel panel-default')
+				div(class='panel-heading')
+					h2(class='panel-title') Today
+				div(class='panel-body')
+					p Delivering: 0,   Undelivered:	0,   Delivery Success: 0
+
+	//
+		div(role='tabpanel')
+			div(class='container')
+				ul(class='nav nav-tabs',role='tablist')
+					li(id='orders-tab',role='presentation',class='active')
+						a(data-toggle='tab',href='#orders') Orders
+					li(id='staffs-tab',role='presentation')
+						a(data-toggle='tab',href='#staffs') Staffs
+					li(id='invoices-tab',role='presentation')
+						a(data-toggle='tab',href='#invoices') Invoices
+
+
+	div(class='tab-content' id='myTabContent')
+		div(class='container')
+			div(role='tabpanel',class='tab-pane fade active in',id='orders',aria-labelledby='orders-tab')
+				table(class='table table-striped')
+					thead
+						tr
+							th ID/Tracking Code
+							th Status
+							th Product(s)
+							th Total
+							th Customer
+							th Delivery by
+							th Operations
+					tbody
+						tr
+							th(scope='row') 001
+							td 11111
+							td dunmanhigh
+							td 1111-11-11 00:00
+							td AH HOOO
+							td O1
+							td O2
+			div(role='tabpanel',class='tab-pane fade',id='staffs')
+				p This is staff page.
+			div(role='tabpanel',class='tab-pane fade',id='invoices')
+				p This is invoice page.
+
+	//
+		script(type='text/javascript')
+		$(function () {$('#myTab a:last').tab('show')})
+
+

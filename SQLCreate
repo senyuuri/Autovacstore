@@ -11,6 +11,8 @@ TABLE staffs
 +-----------+-------------+------+-----+-------------------+----------------+
 
 
+
+
 TABLE orders
 +-------------+--------------+------+-----+-------------------+----------------+
 | Field       | Type         | Null | Key | Default           | Extra          |
@@ -22,8 +24,18 @@ TABLE orders
 | de_accept   | datetime     | YES  |     | NULL              |                | * delivery accepted time (by staff)
 | de_estimate | datetime     | YES  |     | NULL              |                | * estimated delivery time
 | de_staff    | int(11)      | YES  | MUL | NULL              |                | * FOREIGN KEY, delivery staff id
-| add_by      | int(11)      | YES  | MUL | NULL              |                | * FOREIGN KEY
+            |                | * FOREIGN KEY
 +-------------+--------------+------+-----+-------------------+----------------+
+address
+customer
+
+
+TABLE item
+
+
+TABLE 
+
+
 
 
 TABLE log
