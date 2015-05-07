@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var database = require('../routes/database');
 var router = express.Router();
 var app = express();
 
@@ -8,9 +9,20 @@ var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bod
 	extended: false
 }); 
 
+var result = []
+
 router.route('/')
 .get(function (req, res, next) {
-	res.render('addOrder', { title: 'Autovacstore' });
+	var result = []
+	database.getProductList(function(err,rows){
+  		if (err) console.log(err);
+  		console.log("addOrder.js:console")
+  		console.log(res);
+  		result = rows;
+  		console.log("result",result);
+  		res.render('addOrder', { title: 'Autovacstore', plist: result});
+	});
+
 })
 .post(urlencodedParser, function (req, res, next) {
 	if (!req.body) return res.sendStatus(400);

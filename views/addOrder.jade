@@ -2,6 +2,19 @@ extends layout
 
 block content
 
+	script(type='text/javascript').
+		var count = 0;
+		function addRow(){
+			var container = document.getElementById("container");
+			var tag = document.createElement("li");
+			var input = document.createElement("input");
+			input.type = "text";
+			input.name = "member";
+			container.appendChild(input);
+			container.appendChild(document.createElement("br"));
+		};
+
+
 	div(class='container')
 		div(class="page-header")
 			h1 Add Order
@@ -10,7 +23,29 @@ block content
 				div(class="panel-heading")
 					h2(class='panel-title') Select Items
 				div(class="panel-body")
-					p form
+					div(class="dropdown")
+						button(class="col-md-3 btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true")
+							|Select a product
+							span(class="caret")
+						ul(class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1")
+							if plist
+								- for (var i=0; i<plist.length; i++)
+										li(role="presentation")
+										a(role="menuitem" tabindex=plist[i].product_id href="#")= plist[i].name
+							else
+								li(role="presentation")
+									a(role="menuitem" tabindex="-1" href="#")
+										| ERR:NO PRODUCT
+					div(class="form-group col-md-2")
+						label(class="sr-only" for="quantity") Quantity
+						input(type="email",class="form-control",id="exampleInputEmail4",placeholder="quantity")
+					div(class="col-md-2")
+						button(class="btn btn-default" type="submit") Delete
+				div(class="container")
+					button(type="button" class="btn btn-primary") Default button
+				h3 plist
+
+
 
 			div(class="panel panel-default")
 				div(class="panel-heading")
