@@ -4,6 +4,17 @@ block content
 
 	script(type='text/javascript').
 		var count = 0;
+		// Set dropdown text when selected
+		$(document).ready(function() {
+			$(".dropdown-menu a").click(function(){
+				var selText = $(this).text();
+				console.log("I'm running! Don't kill me! QAQ");
+				$(".dropdown-toggle").text(selText);
+			});
+		});
+
+
+
 		function addRow(){
 			var container = document.getElementById("container");
 			var tag = document.createElement("li");
