@@ -4,78 +4,84 @@ block content
 
 	script(type='text/javascript').
 		var count = 0;
-		// Set dropdown text when selected
-		$(document).ready(function() {
-			$(".dropdown-menu a").click(function(){
+		
+		// Set dropdown text when selected 
+		// IMPT: .ready function is necessary for all JQuery codes
+		//   	 to avoid manipulating elements before the DOM tree is created                                               
+		$(document).ready(function(err) {
+
+			$('.dropdown-menu a').click(function(){
 				var selText = $(this).text();
 				console.log("I'm running! Don't kill me! QAQ");
-				$(".dropdown-toggle").text(selText);
+				$(this).parent().parent().find('.dropdown-toggle').text(selText);
+			});
+
+			// Clone the DOM subtree for new rows in table
+			$('#addproduct').click(function(){
+				var create_row = $('#row1').clone(true);
+				$('#productPanel').append(create_row);
+				// TODO change attributes
+			});
+
+			// Remove a row from table 
+			$('.delete').click(function(){
+				$(this).parent().parent().remove();
 			});
 		});
-
-
-
-		function addRow(){
-			var container = document.getElementById("container");
-			var tag = document.createElement("li");
-			var input = document.createElement("input");
-			input.type = "text";
-			input.name = "member";
-			container.appendChild(input);
-			container.appendChild(document.createElement("br"));
-		};
-
+		
 
 	div(class='container')
-		div(class="page-header")
+		div(class='page-header')
 			h1 Add Order
-		form(class="form-group",method="POST")
-			div(class="panel panel-default")
-				div(class="panel-heading")
+		form(class='form-group',method='POST')
+			div(class='panel panel-default')
+				div(class='panel-heading')
 					h2(class='panel-title') Select Items
-				div(class="panel-body")
-					div(class="dropdown")
-						button(class="col-md-3 btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true")
-							|Select a product
-							span(class="caret")
-						ul(class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1")
-							if plist
-								- for (var i=0; i<plist.length; i++)
-										li(role="presentation")
-										a(role="menuitem" tabindex=plist[i].product_id href="#")= plist[i].name
-							else
-								li(role="presentation")
-									a(role="menuitem" tabindex="-1" href="#")
-										| ERR:NO PRODUCT
-					div(class="form-group col-md-2")
-						label(class="sr-only" for="quantity") Quantity
-						input(type="email",class="form-control",id="exampleInputEmail4",placeholder="quantity")
-					div(class="col-md-2")
-						button(class="btn btn-default" type="submit") Delete
-				div(class="container")
-					button(type="button" class="btn btn-primary") Default button
+				div(class='panel-body',id='productPanel')
+					div(class='container-fluid',id="row1")
+						div(class='dropdown')
+							button(class='col-md-3 btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-expanded='true')
+								|Select a product
+								span(class='caret')
+							ul(class='dropdown-menu' role='menu' aria-labelledby='dropdownMenu1')
+								if plist
+									- for (var i=0; i<plist.length; i++)
+											li(role='presentation')
+											a(role='menuitem' tabindex=plist[i].product_id href='#')= plist[i].name
+								else
+									li(role='presentation')
+										a(role='menuitem' tabindex='-1' href='#')
+											| ERR:NO PRODUCT
+						div(class='form-group col-md-2')
+							label(class='sr-only' for='quantity') Quantity
+							input(type='email',class='form-control',id='exampleInputEmail4',placeholder='quantity')
+						div(class='col-md-2')
+							// Different id refers to different line! Remember to change when duplicate.
+							button(type='button',class='btn btn-default delete',id='d1') Delete
+				div(class='container')
+					button(type='button',class='btn btn-primary',id='addproduct') Add
 				h3 plist
 
 
 
-			div(class="panel panel-default")
-				div(class="panel-heading")
+			div(class='panel panel-default')
+				div(class='panel-heading')
 					h2(class='panel-title') Select Delivery Staff
-				div(class="panel-body")
+				div(class='panel-body')
 					p form
 
-			div(class="panel panel-default")
-				div(class="panel-heading")
+			div(class='panel panel-default')
+				div(class='panel-heading')
 					h2(class='panel-title') Customer Information
-				div(class="panel-body")
-					div(class="form-group")
-						label(for="realname",class="control-label") Name
-						input(type="text",class="form-control",name="realname",placeholder="",id='realname')
-					div(class="form-group")
-						label(class="control-label",for='contact') Contact Number
-						input(type="text",class="form-control",name="realname",placeholder="",id='contact')
-					div(class="form-group")
-						label(for="address",class="control-label") Address
-						textarea(class="form-control",rows="3", name="remarks",id='address')
+				div(class='panel-body')
+					div(class='form-group')
+						label(for='realname',class='control-label') Name
+						input(type='text',class='form-control',name='realname',placeholder='',id='realname')
+					div(class='form-group')
+						label(class='control-label',for='contact') Contact Number
+						input(type='text',class='form-control',name='realname',placeholder='',id='contact')
+					div(class='form-group')
+						label(for='address',class='control-label') Address
+						textarea(class='form-control',rows='3', name='remarks',id='address')
 
-			button(type="submit",class="btn btn-default",value="Submit") Submit
+			button(type='submit',class='btn btn-default',value='Submit') Submit
