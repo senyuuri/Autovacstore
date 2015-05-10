@@ -18,33 +18,30 @@
     "type": "git",
     "url": "https://github.com/openshift/origin-server"
   },
-
   "engines": {
     "node": ">= 0.6.0",
     "npm": ">= 1.0.0"
   },
-
   "dependencies": {
-    "express": "~4.11.1",
-    "jade": "latest",
-    "mysql":"latest",
-    "nodetime":"latest",
-    "passport":"~0.1.17",         
-    "passport-local" : "~0.1.6",    
-    "passport-facebook" : "~1.0.2", 
-    "passport-twitter" : "~1.0.2",  
-    "passport-google-oauth" : "~0.1.5",
-    "connect-flash" : "~0.1.1",     
-    "bcrypt-nodejs" : "latest",
+    "async": "^0.9.0",
+    "bcrypt-nodejs": "latest",
     "body-parser": "~1.0.0",
+    "connect-flash": "~0.1.1",
     "cookie-parser": "~1.0.0",
+    "express": "~4.11.1",
+    "express-session": "~1.0.0",
+    "jade": "latest",
     "method-override": "~1.0.0",
-    "express-session": "~1.0.0"
+    "mysql": "latest",
+    "nodetime": "latest",
+    "passport": "~0.1.17",
+    "passport-facebook": "~1.0.2",
+    "passport-google-oauth": "~0.1.5",
+    "passport-local": "~0.1.6",
+    "passport-twitter": "~1.0.2"
   },
-
   "devDependencies": {},
   "bundleDependencies": [],
-
   "private": true,
   "main": "server.js"
 }
