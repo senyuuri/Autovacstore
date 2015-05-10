@@ -22,17 +22,7 @@ connection.query('USE nodejs', function(err, rows) {
     if (err) throw err;
     console.log('SelectedDB: nodejs');
 });
-/*
-exports.addStaff = function(username,password,privilege){
-    connection.query('INSERT INTO staff VALUES (?)', [username,password,privilege], function(err, results){
-    })
-};
 
-exports.queryStaff = function(username){
-    connection.query('SELECT * FROM staff WHERE username=(?)', [username], function(err, results){
-    })
-};
-*/
 
 exports.getProductList = function(cb){
     connection.query('SELECT product_id, name FROM products', function(err, rows){
@@ -49,3 +39,47 @@ exports.getPostmanList = function(cb){
       cb(null,rows);
     });
 };
+
+/* FOR addOrder.js
+*  when adding an order: 
+   Usage: use database.addOrder(tracking_id,status,de_staff,customer_id,[item list],callback)
+   Internal Steps:  1) Add customer info --> table: costomers 
+                    2) Add order info --> table: orders
+                    3) Add order_id + items detail --> table: items
+*/
+
+exports.addOrder = function(tracking_id,status,de_staff,customer_id,items,cb){
+    connection.query('          ', function(err, rows){
+      if (err) return cb(err);
+
+
+
+      console.log("DB_POST: addOrder");
+      cb(null,rows);
+    });
+};
+
+exports.addCustomer = function(cb){
+    connection.query('          ', function(err, rows){
+      if (err) return cb(err);
+      console.log("DB_POST: addCustomer");
+      cb(null,rows);
+    });
+};
+
+exports.addItem = function(cb){
+    connection.query('          ', function(err, rows){
+      if (err) return cb(err);
+      console.log("DB_POST: addItem");
+      cb(null,rows);
+    });
+};
+
+// generate random tracking id
+var genTracking = function(){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for( var i=0; i < 6; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}

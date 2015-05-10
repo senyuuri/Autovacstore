@@ -33,14 +33,33 @@ router.route('/')
 })
 .post(urlencodedParser, function (req, res, next) {
 	if (!req.body) return res.sendStatus(400);
-	var username = req.body.username;
-	var password = req.body.password;
-	var passwordconfirm = req.body.passwordconfirm;
-	var optionsRadios = req.body.optionsRadios;
-	var realname = req.body.realname;
-	var remarks = req.body.remarks;
-	var aaa ="aa";
-	res.send('username:'+username +"  password" +password+"   pwc:"+passwordconfirm+"prv:"+optionsRadios+realname+remarks);
+	// filter: list of known POST key varibles
+	var filter = ['staff','name','contact','address'];
+	var staff = '';
+	var name = '';
+	var contact = '';
+	var address = '';
+	// order items in [product_id, qty] pairs
+	var items = [];
+	for(var key in req.body){
+		staff = req.body.staff;
+		name = req.body.name;
+		contact = req.body.contact;
+		address = req.body.address;
+		// read order quantity
+		console.log("POST PACKET CONTENTS:");
+		console.log("=========================");
+		for(var key in req.body){
+			var value = req.body[key];
+			// if not preset field --> it's an order field
+			if (filter.indexOf(key) == -1){
+				var pid = key.split('-')[1];
+				console.log('pid...',pid,'....',value);
+				items.push([pid,value]);
+			};
+			console.log('items',items);
+		};
+	};
 	next();
 });
 
