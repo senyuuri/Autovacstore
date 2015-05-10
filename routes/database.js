@@ -38,14 +38,14 @@ exports.getProductList = function(cb){
     connection.query('SELECT product_id, name FROM products', function(err, rows){
       if (err) return cb(err);
       console.log("DB_GET: getProductList");
-      /*
-      console.log("SELECT ==> ");
-      for (var i in rows){
-         console.log(rows[i]);
-      }; 
-      */
       cb(null,rows);
-    })
+    });
 };
 
-
+exports.getPostmanList = function(cb){
+    connection.query('SELECT staff_id, realname FROM staff', function(err, rows){
+      if (err) return cb(err);
+      console.log("DB_GET: getStaffList");
+      cb(null,rows);
+    });
+};

@@ -13,14 +13,21 @@ var result = []
 
 router.route('/')
 .get(function (req, res, next) {
-	var result = []
+	var products = [];
+	var postmen = [];
+	// Get product list
 	database.getProductList(function(err,rows){
-  		if (err) console.log(err);
+		if (err) console.log(err);
   		console.log("addOrder.js:console")
-  		console.log(res);
-  		result = rows;
-  		console.log("result",result);
-  		res.render('addOrder', { title: 'Autovacstore', plist: result});
+  		products = rows;
+  		// Get delivery man list
+		database.getPostmanList(function(err,rows2){
+			// TODO: query individual's status
+			if (err) console.log(err);
+  			postmen = rows2;
+  			console.log("postmen",postmen);
+			res.render('addOrder', { title: 'Autovacstore', plist: products, staff: postmen});
+		});		
 	});
 
 })
