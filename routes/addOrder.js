@@ -9,7 +9,6 @@ var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bod
 	extended: false
 }); 
 
-var result = []
 
 router.route('/')
 .get(function (req, res, next) {
@@ -72,7 +71,7 @@ router.route('/')
 			res.render('addOrderFinish', { title: 'ERROR', content: err+' Please contact administrator.'});
 		};
 		res.render('addOrderFinish', { title: 'Your order has been succeessfully added.', 
-				content:'The page will automatically redirect to order list in 3 seconds...'});
+				content:'This page will automatically redirect to order list in 3 seconds...'});
 	});
 });
 

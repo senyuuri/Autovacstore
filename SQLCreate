@@ -19,7 +19,7 @@ TABLE orders
 +-------------+--------------+------+-----+-------------------+----------------+
 | order_id    | int(11)      | NO   | PRI | NULL              | auto_increment |
 | tracking_id | varchar(255) | YES  |     | NULL              |                | * auto generated id for customers' references
-| status      | char(1)      | NO   |     | NULL              |                | * (r)received, (p)processing, (d)delivered, (e)error
+| status      | char(1)      | NO   |     | NULL              |                | * (r)received, (p)processing, (s)success, (e)error
 | created     | timestamp    | NO   |     | CURRENT_TIMESTAMP |                |
 | de_accept   | datetime     | YES  |     | NULL              |                | * delivery accepted time (by staff)
 | de_estimate | datetime     | YES  |     | NULL              |                | * estimated delivery time
@@ -171,6 +171,33 @@ INSERT INTO items(order_id, product_id, qty,total) VALUES (
 
 SELECT items.* FROM orders, items
 WHERE orders.order_id = 1 and items.order_id = 1;
+
+//Undelivered
+SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, orders.de_staff, 
+staff.realname, items.product_id, items.qty, items.total, customers.name, 
+products.name AS product_name
+FROM orders 
+INNER JOIN items ON orders.order_id=items.order_id 
+INNER JOIN customers ON orders.customer_id=customers.customer_id 
+INNER JOIN staff ON orders.de_staff=staff.staff_id
+INNER JOIN products ON items.product_id = products.product_id
+WHERE orders.status='r' OR orders.status='p'
+ORDER BY orders.order_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

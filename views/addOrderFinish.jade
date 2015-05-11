@@ -1,5 +1,15 @@
 extends layout
 
 block content
+
+	script(type='text/javascript').
+		var count = 0;
+                                             
+		$(document).ready(function(err) {
+			//in milliseconds
+			var delay = 3000; 
+			setTimeout(function(){ window.location = '/undelivered'; }, delay);
+		});
+
 	h1= title 
 	p= content

@@ -16,9 +16,9 @@ router.route('/')
 	// record orders that have been processed
 	var oFilter = [];
 	// Get product list
-	database.getUndelivered(function(err,rows){
+	database.getDelivered(function(err,rows){
 		if (err) console.log(err);
-  		console.log("============= undelivered.js =============");
+  		console.log("============= delivered.js =============");
   		//console.log(rows);
   		// conbine products and calculate total payables
   		for(var i=0; i<rows.length;i++){
@@ -47,7 +47,7 @@ router.route('/')
   		};
   		console.log('=======================');
   		console.log(result);
-		res.render('undelivered', { title: 'Autovacstore',result: result});
+		res.render('delivered', { title: 'Autovacstore',result: result});
 		});		
 });
 

@@ -61,13 +61,13 @@ block content
 		});
 		
 
-	div(class='container')
-		div(class='page-header')
+	div(class='container-fluid')
+		//div(class='page-header')
 			h1 Add Order
 		form(class='form-group',method='POST')
 			div(class='panel panel-default')
 				div(class='panel-heading')
-					h2(class='panel-title') Select Items
+					h2(class='panel-title') Order List
 				div(class='panel-body',id='productPanel')
 					div(class='container-fluid',id="row1")
 						div(class='dropdown')
@@ -92,13 +92,13 @@ block content
 						div(class='col-md-2')
 							// Different id refers to different line! Remember to change when duplicate.
 							button(type='button',class='btn btn-default delete',id='d1') Delete
-				div(class='container')
-					button(type='button',class='btn btn-primary',id='addproduct') Add
+				div(class='container-fluid')
+					button(type='button',class='btn btn-primary',style='margin-left: 15px;',id='addproduct') Add
 				h3
 
 			div(class='panel panel-default')
 				div(class='panel-heading')
-					h2(class='panel-title') Select Delivery Staff
+					h2(class='panel-title') Delivery Staff
 				div(class='panel-body',id='selstaff')
 					if staff
 						- for (var i=0; i<staff.length; i++)

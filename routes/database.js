@@ -49,6 +49,42 @@ exports.getProductPrice = function(product_id,cb){
 	});
 }
 
+// For undelivered.js                                                      
+exports.getUndelivered = function(cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.status='r' OR orders.status='p' " +
+					'ORDER BY orders.order_id;'
+					,function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getUndelivered");
+			cb(null,rows);
+	});
+}
+
+exports.getDelivered = function(cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.status='s' " +
+					'ORDER BY orders.order_id;'
+					,function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getDelivered");
+			cb(null,rows);
+	});
+}
+
+
 /* FOR addOrder.js POST method
 
    Usage: use database.addOrder(tracking_id,status,staff_id,name,contact,address,[item list],callback)

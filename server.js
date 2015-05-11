@@ -204,7 +204,7 @@ var overview = require('./routes/overview');
 // var settings = require('./routes/settings');
 var addOrder = require('./routes/addOrder');
 var undelivered = require('./routes/undelivered');
-// var delivered = require('./routes/delivered');
+var delivered = require('./routes/delivered');
 // var staff = require('./routes/staff');
 // var products = require('./routes/products');
 
@@ -215,7 +215,7 @@ osapp.app.use('/', overview);
 //osapp.app.use('/settings',settings);
 osapp.app.use('/addOrder', addOrder);
 osapp.app.use('/undelivered',undelivered);
-// osapp.app.use('/delivered',delivered);
+osapp.app.use('/delivered',delivered);
 // osapp.app.use('/staff',staff);
 // osapp.app.use('/products',products);
 
