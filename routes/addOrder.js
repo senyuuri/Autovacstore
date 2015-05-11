@@ -25,7 +25,7 @@ router.route('/')
 			if (err) console.log(err);
   			postmen = rows2;
   			console.log("postmen",postmen);
-			res.render('addOrder', { title: 'Autovacstore', plist: products, staff: postmen});
+			res.render('addOrder', {page:'addorder',title: 'Autovacstore', plist: products, staff: postmen});
 		});		
 	});
 
@@ -68,9 +68,9 @@ router.route('/')
 		console.log('return to addOrder.js');
 		if (err){
 			console.log(err);
-			res.render('addOrderFinish', { title: 'ERROR', content: err+' Please contact administrator.'});
+			res.render('addOrderFinish', { page:'addorder',title: 'ERROR', content: err+' Please contact administrator.'});
 		};
-		res.render('addOrderFinish', { title: 'Your order has been succeessfully added.', 
+		res.render('addOrderFinish', { page:'addorder',title: 'Your order has been succeessfully added.', 
 				content:'This page will automatically redirect to order list in 3 seconds...'});
 	});
 });

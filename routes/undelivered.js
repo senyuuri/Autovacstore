@@ -18,36 +18,36 @@ router.route('/')
 	// Get product list
 	database.getUndelivered(function(err,rows){
 		if (err) console.log(err);
-  		console.log("============= undelivered.js =============");
-  		//console.log(rows);
-  		// conbine products and calculate total payables
-  		for(var i=0; i<rows.length;i++){
-  			var record = rows[i];
-  			// if the order has not been processed
-  			if (oFilter.indexOf(record['order_id']) == -1){
-  				oFilter.push(record['order_id']);
-  				var items = record['product_name']+'('+record['qty']+')';
-  				result.push({'order_id':record['order_id'],
-  							'tracking_id':record['tracking_id'],
-  							'status':record['status'],
-  							'customer':record['name'],
-  							'customer_id':record['customer_id'],
-  							'staff':record['realname'],
-  							'staff_id':record['de_staff'],
-  							'items':items,
-  							'total':record['total']
-  							});
-  			}
-  			// if orders with the same order_id have been processed
-  			else{
-  				// modify last record
-  				result[result.length-1]['items'] += ',' +record['product_name']+'('+record['qty']+')';
-  				result[result.length-1]['total'] += record['total']
-  			};
-  		};
-  		console.log('=======================');
-  		console.log(result);
-		res.render('undelivered', { title: 'Autovacstore',result: result});
+		console.log("============= undelivered.js =============");
+		//console.log(rows);
+		// conbine products and calculate total payables
+		for(var i=0; i<rows.length;i++){
+			var record = rows[i];
+			// if the order has not been processed
+			if (oFilter.indexOf(record['order_id']) == -1){
+				oFilter.push(record['order_id']);
+				var items = record['product_name']+'('+record['qty']+')';
+				result.push({'order_id':record['order_id'],
+							'tracking_id':record['tracking_id'],
+							'status':record['status'],
+							'customer':record['name'],
+							'customer_id':record['customer_id'],
+							'staff':record['realname'],
+							'staff_id':record['de_staff'],
+							'items':items,
+							'total':record['total']
+							});
+			}
+			// if orders with the same order_id have been processed
+			else{
+				// modify last record
+				result[result.length-1]['items'] += ',' +record['product_name']+'('+record['qty']+')';
+				result[result.length-1]['total'] += record['total']
+			};
+		};
+		console.log('=======================');
+		console.log(result);
+		res.render('undelivered', { title: 'Autovacstore',page:'undelivered',result: result});
 		});		
 });
 

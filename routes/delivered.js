@@ -47,7 +47,7 @@ router.route('/')
   		};
   		console.log('=======================');
   		console.log(result);
-		res.render('delivered', { title: 'Autovacstore',result: result});
+		res.render('delivered', { title: 'Autovacstore',page:'delivered',result: result});
 		});		
 });
 

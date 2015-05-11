@@ -30,19 +30,50 @@ html
 			div(class='row')
 				div(class="col-sm-3 col-md-2 sidebar")
 					ul(class="nav nav-sidebar")
-						li(class="active")
-							a(href="/") Overview 
+						//==============================
+						if page == 'overview'
+							li(class="active")
+								a(href="/") Overview 
+						else 
+							li
+								a(href="/") Overview 
+						//==============================
+						if page == 'addorder'
+							li(class="active")
+								a(href="/addorder") Add Order
+						else
+							li
+								a(href="/addorder") Add Order
+						//==============================
+						if page == 'undelivered'
+							li(class="active")
+								a(href="/undelivered") Undelivered
+						else
+							li
+								a(href="/undelivered") Undelivered
+						//==============================
+						if page == 'delivered'
+							li(class="active")
+								a(href="/delivered") Delivered
+						else	
+							li
+								a(href="/delivered") Delivered
+						//==============================
+						if page == 'staff'
+							li(class="active")
+								a(href="/staff") Staff
+						else
+							li
+								a(href="/staff") Staff
+						//==============================
+						if page == 'products'
+							li(class="active")
+								a(href="/products") Products	
+						else
+							li
+								a(href="/products") Products
+							
 								span(class="sr-only") (Current)
-						li
-							a(href="/addorder") Add Order
-						li
-							a(href="/undelivered") Undelivered
-						li
-							a(href="/delivered") Delivered
-						li
-							a(href="/staffs") Staff
-						li
-							a(href="/products") Products
 			div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
 				block content
 
