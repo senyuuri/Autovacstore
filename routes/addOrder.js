@@ -41,26 +41,39 @@ router.route('/')
 	var address = '';
 	// order items in [product_id, qty] pairs
 	var items = [];
+
+	staff = req.body.staff;
+	name = req.body.name;
+	contact = req.body.contact;
+	address = req.body.address;
+	// read order quantity
+	console.log("POST PACKET CONTENTS:");
+	console.log("=========================");
+	console.log('delivery_staff......',staff);
+	console.log('name......',name);
+	console.log('contact......',contact);
+	console.log('address......',address);
 	for(var key in req.body){
-		staff = req.body.staff;
-		name = req.body.name;
-		contact = req.body.contact;
-		address = req.body.address;
-		// read order quantity
-		console.log("POST PACKET CONTENTS:");
-		console.log("=========================");
-		for(var key in req.body){
-			var value = req.body[key];
-			// if not preset field --> it's an order field
-			if (filter.indexOf(key) == -1){
-				var pid = key.split('-')[1];
-				console.log('pid...',pid,'....',value);
-				items.push([pid,value]);
-			};
-			console.log('items',items);
+		var value = req.body[key];
+		// if not preset field --> it's an order field
+		if (filter.indexOf(key) == -1){
+			var pid = key.split('-')[1];
+			console.log('pid...',pid,'....',value);
+			items.push([pid,value]);
 		};
 	};
-	next();
+	console.log('items',items);
+	// Definition
+	// exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb){}
+	database.addOrderSubmit('r',staff,name,contact,address,items,function(err,result){
+		console.log('return to addOrder.js');
+		if (err){
+			console.log(err);
+			res.render('addOrderFinish', { title: 'ERROR', content: err+' Please contact administrator.'});
+		};
+		res.render('addOrderFinish', { title: 'Your order has been succeessfully added.', 
+				content:'The page will automatically redirect to order list in 3 seconds...'});
+	});
 });
 
 

@@ -54,7 +54,7 @@ exports.getProductPrice = function(product_id,cb){
    Usage: use database.addOrder(tracking_id,status,staff_id,name,contact,address,[item list],callback)
 
    Internal Steps:  STAGE 1 (obtaining necessary info for stage 2)
-   					1) ft AddCustomer: customer info --> table: costomers 
+					1) ft AddCustomer: customer info --> table: costomers 
 					2) fn getAutoIncrementID: get customer id
 					3) fn genTrackingID: random 6-char string
 					STAGE 2
@@ -67,58 +67,90 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb)
 	// async doc ref: https://github.com/caolan/async#seriestasks-callback
 	// ============  STAGE 1 ============  
 	async.series({
-	    one: function(callback){
-	    	// 1) fn AddCustomer: customer info --> table: costomers 
-	    	exports.addCustomer(name,contact,address,function(err,rows){
-	        	callback(null,rows);
-	    	})
-	    },
-	    two: function(callback){
-	    	// 2) fn getAutoIncrementID: get customer id
-			exports.getAutoIncrementID(function(err,rows){
-	        	callback(null,rows);
-	        })
-	    },
-	    three: function(callback){
-	    	// 3) fn genTrackingID: random 6-char string
-			exports.genTrackingID(function(err,text){
+		one: function(callback){
+			// 1) fn AddCustomer: customer info --> table: costomers ß
+			exports.addCustomer(name,contact,address,function(err,rows){
 				callback(null,rows);
 			})
-	    },
+		},
+		two: function(callback){
+			// 2) fn getAutoIncrementID: get customer id
+			exports.getAutoIncrementID(function(err,rows){
+				callback(null,rows);
+			})
+		},
+		three: function(callback){
+			// 3) fn genTrackingID: random 6-char string
+			exports.genTrackingID(function(err,text){
+				callback(null,text);
+			})
+		},
 	},
 	// when one & two & three finish
 	// results is now equal to: {one: ..., two: ..., three:...}
 	function(err, results) {
 		if (err) cb(err);
 		console.log("one+two+three result..........",results);
-		var customer_id = results['two'];
+		var customer_id = results['two'][0]['LAST_INSERT_ID()'];
 		var tracking_id = results['three'];
 
 		// ============  STAGE 2 ============  
 		// async.waterfall: 
 		// 	 Runs the tasks array of functions in series, each passing their results to the next in the array. 
-    	async.waterfall({
-		    four: function(callback){
-		    	// 4) fn AddOrder: order info --> table: orders
-		    	exports.addOrder(tracking_id,status,staff_id,results['two'], function(err, rows){
-		        	callback(null,rows);
-		    	})
-		    },
-		    five: function(callback){
-		    	// 5) fn AddItem: order_id + items detail --> table: items
-		        callback(null,rows);
-		    },
-		    six: function(callback){
-		    	// 5) fn AddItem: order_id + items detail --> table: items
-		        callback(null,rows);
-
-		},
+		async.waterfall([
+			// FOUR
+			// 4) fn AddOrder: order info --> table: orders
+			function(callback){
+				exports.addOrder(tracking_id,status,staff_id,customer_id, function(err, rows){
+					callback(null);
+				})
+			},
+			// FIVE
+			// 5) fn getAutoIncrementID: get order id
+			function(callback){
+				exports.getAutoIncrementID(function(err,rows){
+					console.log("FIVE:ROWS:.....",rows);
+					callback(null,rows[0]['LAST_INSERT_ID()']);
+				})
+			},
+			// SIX
+			// note:  arg1 is the return result from five
+			// 6) fn AddItem: order_id + items detail --> table: items
+			// async.whilst: whilst(test, fn, callback)
+			function(arg1, callback){
+				console.log('arg1(order_id)...........',arg1);
+				console.log('items.length......',items.length);
+				var count = 0;
+				async.whilst(
+					function () { return count < items.length; },
+					function (callback) {
+						console.log('async.whilst: count...........',count);
+						console.log('current item..................',items[count])
+						exports.addItem(arg1,items[count][0],items[count][1],function(err,rows){
+							count++;
+							console.log('after count++....',count);
+							console.log('console<items.length',count < items.length);
+							//console.trace("Here I am!");
+							callback(null);
+						}); 
+					},
+					function (err) {
+						// all items have been added 
+						console.log('addItems..........FINISH');
+						callback(null);
+						
+					}
+				);
+			}
+		],
 		function(err, finish) {
-			if (err) console.log(err);
+			if (err) throw err;
+			console.log("ORDER ADD SUCCESS!");
+			cb(null,finish);
 		})
-	}
 	});
-
+};
+	
 	/* V1.0 code, reserved for future reference
 	// 1) Add customer info into table customers
 	exports.addCustomer(name,contact,address,function(err,rows1){
@@ -140,13 +172,11 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb)
 	});
 	*/
 
-};
 
 // add to table 'orders' ONLY
 // reserved for addOrderSubmit function
 exports.addOrder = function(tracking_id,status,staff_id,customer_id,cb){
-	connection.query("INSERT INTO orders(tracking_id,status,de_staff,customer_id) VALUES (
-						  ?, ?, ?,(SELECT customer_id FROM customers WHERE name= ?));",
+	connection.query("INSERT INTO orders (tracking_id,status,de_staff,customer_id) VALUES (?, ?, ?, ?);",
 						  [tracking_id,status,staff_id,customer_id], function(err, rows){
 		console.log("DB_INSERT: addOrder");
 		cb(null,rows);
@@ -171,19 +201,20 @@ exports.addItem = function(order_id,product_id,quantity,cb){
 	// Get single price for the product
 	exports.getProductPrice(product_id, function(err,result){
 		if (err) return cb(err);
-		var price = result;
+		var price = result[0]['price'];
 		// Calculate total amount of price
 		var total = price * quantity;
 		// Add record to item table
-		connection.query('INSERT INTO items(order_id, product_id, qty,total) VALUES (?,?,?,?)',[order_id,product_id,quantity,total] ,function(err2, rows){
+		connection.query('INSERT INTO items (order_id, product_id, qty,total) VALUES (?,?,?,?)',[order_id,product_id,quantity,total] ,function(err2, rows){
 			if (err2) return cb(err);
 			console.log("DB_INSERT: addItem");
 			cb(null,rows);
+		});
 	});
 };
 
 exports.getAutoIncrementID = function(cb){
-	connection.query("SELECT LAST_INSERT_ID()"),function(err,rows){
+	connection.query("SELECT LAST_INSERT_ID()",function(err,rows){
 		if (err) return cb(err);
 		console.log('DB_SELECT:getAutoIncrementID......',rows);
 		cb(null,rows);
