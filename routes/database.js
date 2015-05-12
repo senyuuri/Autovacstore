@@ -36,7 +36,7 @@ var generateHash = function(password) {
 };
 
 // checking if password is valid
-var validPassword = function(password,hash) {
+exports.validPassword = function(password,hash) {
     return bcrypt.compareSync(password, hash);
 };
 
@@ -50,7 +50,7 @@ exports.ifUserExist = function(username, cb){
 }
 
 exports.getPasswordHash = function(username,cb){
-	connection.query('SELECT password FROM staff WHERE username=',username, function(err, rows){
+	connection.query('SELECT password FROM staff WHERE username=?',username, function(err, rows){
 	  if (err) return cb(err);
 	  console.log("DB_LOGIN: getPasswordHash",rows);
 	  cb(null,rows[0]['password']);

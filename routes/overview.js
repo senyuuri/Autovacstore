@@ -12,10 +12,10 @@ router.route('/')
 
 
 /*
-.all(passport.authenticate('local', 
+.all(passport.authenticate('local-login', 
 									{successRedirect: '/',
 									failureRedirect: '/login',
-									failureFlash: true })
+									failureFlash: true }))
 )
 */
 
