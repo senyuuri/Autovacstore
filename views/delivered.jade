@@ -23,6 +23,13 @@ block content
 									if (result[i]['status']=='s')
 										th
 											span(class="label label-success") Delivered
+									if (result[i]['status']=='r')
+										th
+											span(class="label label-warning") Undelivered
+									if (result[i]['status']=='d')
+										th
+											span(class="label label-primary") Delivering
+
 									td= result[i]['items']
 									td= '$ ' + result[i]['total']
 									td= result[i]['customer']

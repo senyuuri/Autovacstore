@@ -20,6 +20,8 @@ var session      = require('express-session');
 var connection = mysql.createConnection({
   host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
   port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
+  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'admin9dbD4cT',
+  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'e3lc8i8ftG4F'
 });
 
 
@@ -227,6 +229,7 @@ osapp.app.use('/login',login);
 //osapp.app.use('/settings',settings);
 osapp.app.use('/addOrder', addOrder);
 osapp.app.use('/undelivered',undelivered);
+osapp.app.use('/delivered',delivered);
 osapp.app.use('/postman',postman);
 // osapp.app.use('/staff',staff);
 // osapp.app.use('/products',products);

@@ -16,7 +16,7 @@ router.route('/')
 	// record orders that have been processed
 	var oFilter = [];
 	// Get product list
-	database.getDelivered(function(err,rows){
+	database.getUndelivered(function(err,rows){
 		if (err) console.log(err);
   		console.log("============= delivered.js =============");
   		//console.log(rows);
