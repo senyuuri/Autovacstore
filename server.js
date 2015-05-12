@@ -12,6 +12,11 @@ var jade    = require('jade');
 var path    = require('path');
 var mysql   = require('mysql');
 var bodyParser = require('body-parser');
+// passport configuration
+var passport = require('passport');
+var flash    = require('connect-flash');
+var cookieParser = require('cookie-parser');
+var session      = require('express-session');
 var connection = mysql.createConnection({
   host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
   port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
@@ -128,8 +133,16 @@ var OpenshiftApp = function() {
         self.app = express();
         //  Set view engine as jade
         self.app.set('views', path.join(__dirname, 'views'));
-        self.app.set('styles', path.join(__dirname, 'styles'));
+        self.app.set('styles', express.static(__dirname, 'styles'));
         self.app.set('view engine', 'jade');
+        self.app.use('/static', express.static(__dirname + '/static'));
+        // Passport initialisation
+        self.app.use(cookieParser());
+        self.app.use(session({ secret: 'wcmwcmwcmwcmbendan' })); // session secret
+        self.app.use(passport.initialize());
+        self.app.use(passport.session()); // persistent login sessions
+        self.app.use(flash()); // use connect-flash for flash messages stored in session
+
         // TEST
         // Using separate js files under "/routes"
 
@@ -200,22 +213,23 @@ osapp.start();
 
 
 var overview = require('./routes/overview');
-// var login = require('./routes/login');
+var login = require('./routes/login');
 // var settings = require('./routes/settings');
 var addOrder = require('./routes/addOrder');
 var undelivered = require('./routes/undelivered');
 var delivered = require('./routes/delivered');
+var postman = require('./routes/postman');
 // var staff = require('./routes/staff');
 // var products = require('./routes/products');
 
 
 
 osapp.app.use('/', overview);
-//osapp.app.use('/login',login);
+osapp.app.use('/login',login);
 //osapp.app.use('/settings',settings);
 osapp.app.use('/addOrder', addOrder);
 osapp.app.use('/undelivered',undelivered);
-osapp.app.use('/delivered',delivered);
+osapp.app.use('/postman',postman);
 // osapp.app.use('/staff',staff);
 // osapp.app.use('/products',products);
 

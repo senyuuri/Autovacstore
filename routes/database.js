@@ -2,6 +2,7 @@ var express = require('express');
 var exports = module.exports = {};
 var mysql   = require('mysql');
 var async   = require('async');
+var bcrypt   = require('bcrypt-nodejs');
 var connection = mysql.createConnection({
   host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
   port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
@@ -24,6 +25,37 @@ connection.query('USE nodejs', function(err, rows) {
 	console.log('SelectedDB: nodejs');
 });
 
+/* FOR login.js
+	fn generateHash:  hashing & salting password 
+	fn validPassword:  verify hashed password
+	fn ifUserExist:   check if username is in database
+	fn getPasswordHash  retrive hashed password from database
+*/
+var generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+// checking if password is valid
+var validPassword = function(password,hash) {
+    return bcrypt.compareSync(password, hash);
+};
+
+
+exports.ifUserExist = function(username, cb){
+	connection.query('SELECT staff_id FROM staff WHERE username=?',username, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_LOGIN: ifUserExist",username,rows.length == 1);
+	  cb(null, rows);
+	});
+}
+
+exports.getPasswordHash = function(username,cb){
+	connection.query('SELECT password FROM staff WHERE username=',username, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_LOGIN: getPasswordHash",rows);
+	  cb(null,rows[0]['password']);
+	});
+};
 
 exports.getProductList = function(cb){
 	connection.query('SELECT product_id, name FROM products', function(err, rows){
