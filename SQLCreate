@@ -56,7 +56,7 @@ Initialisation (MySQL)
 CREATE TABLE IF NOT EXISTS staff
 (
 staff_id int NOT NULL AUTO_INCREMENT,
-username varchar(20) NOT NULL,
+username varchar(20) NOT NULL UNIQUE,
 password varchar(50) NOT NULL,
 previlege char(1) NOT NULL,
 realname varchar(30) NOT NULL,

@@ -17,12 +17,6 @@ var passport = require('passport');
 var flash    = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
-var connection = mysql.createConnection({
-  host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
-  port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
-  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'admin9dbD4cT',
-  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'e3lc8i8ftG4F'
-});
 
 
 /* ================================================================  */
@@ -103,28 +97,6 @@ var OpenshiftApp = function() {
     };
 
     /**
-    *  Create database connection.
-    */
-
-    self.connectDB = function() {
-        connection.connect(function(err) {
-            if (err) {
-                console.error('error connecting: ' + err.stack);
-                return;
-            }
-
-            console.log('connected as id ' + connection.threadId);
-        });
-       
-        connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
-            if (err) throw err;
-            console.log('The solution is: ',rows[0].solution);
-        });
-    };
-    
-    
-
-    /**
      *  Initialize the server (express) and create the routes and register
      *  the handlers.
      */
@@ -143,16 +115,6 @@ var OpenshiftApp = function() {
         self.app.use(passport.session()); // persistent login sessions
         self.app.use(flash()); // use connect-flash for flash messages stored in session
 
-        // TEST
-        // Using separate js files under "/routes"
-
-        //  Add handlers for the app (from the routes).
-        /*
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-        */
-        self.connectDB();
     };
 
 
@@ -225,7 +187,7 @@ var postman = require('./routes/postman');
 
 
 osapp.app.use('/', overview);
-osapp.app.use('/login',login);
+osapp.app.use('/auth',login);
 //osapp.app.use('/settings',settings);
 osapp.app.use('/addOrder', addOrder);
 osapp.app.use('/undelivered',undelivered);

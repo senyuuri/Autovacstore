@@ -18,14 +18,13 @@ module.exports = function(passport) {
 	// passport needs ability to serialize and unserialize users out of session
 
 	// used to serialize the user for the session
-	passport.serializeUser(function(username, done) {
-		done(null, username);
+	passport.serializeUser(function(User, done) {
+		done(null, User);
 	});
 
 	// used to deserialize the user
-	passport.deserializeUser(function(username, done) {
-		//todo findbyid
-			done(null, username);
+	passport.deserializeUser(function(User, done) {
+		done(null, User);
 	});
 	
 
@@ -37,23 +36,7 @@ module.exports = function(passport) {
 			usernameField : 'username',
 			passwordField : 'password',
 			passReqToCallback : true 
-		},// allows us to pass back the entire request to the callback
-		//test
-		/*
-		function(req,username, password, done) {
-			console.log('strategy:local-login..........start');
-			if(username == "admin") {
-				if(password == "123456") {
-					return done(null, username);
-				} else {
-					return done(null, false, { message: 'Incorrect password.' });
-				}
-			} else {
-				return done(null, false, { message: 'Incorrect username.' });
-			}
-		}
-	));
-	*/
+		},
 		function(req, username, password, done) {
 			console.log('strategy:local-login..........start');
 			database.ifUserExist(username, function(err, rows) {
@@ -62,21 +45,32 @@ module.exports = function(passport) {
 					return done(err);
 				// if no user is found, return the message
 				if (!rows.length)
-					return done(null, false, req.flash('loginMessage', 'User not found.')); // req.flash is the way to set flashdata using connect-flash
+					return done(null, false, req.flash('loginMessage', 'ERR: USER NOT FOUND')); // req.flash is the way to set flashdata using connect-flash
 
 				
-				database.getPasswordHash(username,function(err,rows){
+				database.getPasswordHash(username,function(err,hash){
+					//console.log("passport.js:","username:",username,"hash:",rows,"inputPW:",password);
 					if(err) throw err;
-					hash = rows;
 					// if the user is found but the password is wrong
 					// TODO: !!!!!!!!!!!!!!!!!
 					// change back when signup is done(with bcrypt)
-					//if (!database.validPassword(password,hash))
+					// if (!database.validPassword(password,hash)) 
 					if(hash != password)
-						return done(null, false, req.flash('loginMessage', 'Wrong password.')); // create the loginMessage and save it to session as flashdata
+						return done(null, false, req.flash('loginMessage', 'ERR: WRONG PASSWORD')); // create the loginMessage and save it to session as flashdata
 
 					// all is well, return successful user
-					return done(null, rows[0]);
+					else
+						// get user permission
+						database.getUserPermission(username,function(err,role){
+							// create user object, which will be serialised later
+							var User = new Object();
+							console.log('uid:',rows);
+							User.uid = rows[0]["staff_id"];
+							User.username = username;
+							// store user permisson(it can be accessed in req.user.role later)
+							User.role = role;				
+							return done(null, User);
+						});
 				})
 				
 			});

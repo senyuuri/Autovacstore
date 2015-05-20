@@ -10,8 +10,7 @@ var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bod
 }); 
 
 
-router.route('/')
-.get(function (req, res, next) {
+router.get('/',isLoggedIn,function (req, res, next) {
 	var products = [];
 	var postmen = [];
 	// Get product list
@@ -29,8 +28,9 @@ router.route('/')
 		});		
 	});
 
-})
-.post(urlencodedParser, function (req, res, next) {
+});
+
+router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
 	if (!req.body) return res.sendStatus(400);
 	// filter: list of known POST key varibles
 	var filter = ['staff','name','contact','address'];
@@ -77,17 +77,24 @@ router.route('/')
 
 
 
+function isLoggedIn(req, res, next) {
 
-/*
-//router.get('/:id(\\d+)', function(req, res) {
-router.route('/:id').get(function (req, res, next) {
-  res.send('respond user Info userid:' + req.params.id);
-});
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated()){	
+	// check if the user has admin permission
+		if (req.user.role == 'a')
+			return next();
+		else{
+			req.flash('loginMessage', 'ERR: NO PERMISSION');
+			res.redirect('/auth')
+		}
+	// if they aren't redirect them to the home page
+	}else{
+		req.flash('loginMessage', 'You have not logged in.');
+		res.redirect('/auth')
+	};
+}
 
-// respond with "Hello World!" on the homepage
-router.route('/hello').get(function (req, res, next) {
-  res.send('Hello World!');
-});
-*/
+
  
 module.exports = router;

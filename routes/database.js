@@ -52,8 +52,16 @@ exports.ifUserExist = function(username, cb){
 exports.getPasswordHash = function(username,cb){
 	connection.query('SELECT password FROM staff WHERE username=?',username, function(err, rows){
 	  if (err) return cb(err);
-	  console.log("DB_LOGIN: getPasswordHash",rows);
+	  console.log("DB_LOGIN: getPasswordHash",rows[0]['password']);
 	  cb(null,rows[0]['password']);
+	});
+};
+
+exports.getUserPermission = function(username,cb){
+	connection.query('SELECT previlege FROM staff WHERE username=?',username, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_LOGIN: getUserPermission",rows[0]['previlege']);
+	  cb(null,rows[0]['previlege']);
 	});
 };
 
@@ -218,27 +226,6 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb)
 		})
 	});
 };
-	
-	/* V1.0 code, reserved for future reference
-	// 1) Add customer info into table customers
-	exports.addCustomer(name,contact,address,function(err,rows1){
-		if (err) return cb(err);
-		// 2) Get customer 
-		exports.getAutoIncrementID(function(){
-				if (err) return cb(err);
-				// 3)Add order info
-				exports.addOrder(tracking_id,status,staff_id,customer_id, function(err, rows2){
-					if (err) return cb(err);
-					// 4) Add items iterately
-					// TODO iternation
-					console.log("DB_POST: addOrder");
-					cb(null,rows);
-
-				});
-		});
-			
-	});
-	*/
 
 
 // add to table 'orders' ONLY

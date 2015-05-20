@@ -11,7 +11,7 @@ html
 		meta(name="viewport",content="width=device-width, initial-scale=1")
 
 	body
-		form(class="form col-md-12 center-block", method='POST',action='/login')
+		form(class="form col-md-12 center-block", method='POST',action='/auth')
 			div(id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true")
 				div(class="modal-dialog")
 					div(class="modal-content")
@@ -21,12 +21,16 @@ html
 							p(class="text-center") DMS ver/alpha1.0
 						div(class="modal-body")
 								if message.length> 0
-									div(class="form-group")
-										div(class="alert alert-danger")= message
+									if message == "You have successfully logged out."
+										div(class="form-group")
+											div(class="alert alert-success")= message
+									else
+										div(class="form-group")
+											div(class="alert alert-danger")= message
 								div(class="form-group")
-									input(type="text",class="form-control input-lg",placeholder="Username",name='username')
+									input(type="text",class="form-control input-lg",placeholder="Username",name='username',required='')
 								div(class="form-group")
-									input(type="password",class="form-control input-lg",placeholder="Password",name='password')
+									input(type="password",class="form-control input-lg",placeholder="Password",name='password',required='')
 								
 						div(class="modal-footer")
 							div(class="col-md-12")

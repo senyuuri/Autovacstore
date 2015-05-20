@@ -12,10 +12,10 @@ var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bod
 /*
 var LocalStrategy   = require('passport-local').Strategy;
 passport.use(new LocalStrategy(
-    function(username, password, done) {
-        console.log("LocalStrategy working...");
-        return done(null, { id: 1, username: 'Joe', password: 'schmo'});
-    }
+	function(username, password, done) {
+		console.log("LocalStrategy working...");
+		return done(null, { id: 1, username: 'Joe', password: 'schmo'});
+	}
 ));
 
 router.post('/',urlencodedParser,function(req,res,next){
@@ -23,14 +23,21 @@ router.post('/',urlencodedParser,function(req,res,next){
 });
 */
 router.post('/',urlencodedParser,passport.authenticate('local-login', { successRedirect: '/',
-      failureRedirect: '/login/loginerror',
-      failureFlash: true })
+	  failureRedirect: '/auth',
+	  failureFlash: true })
 );
 
 router.get('/loginerror',function(req,res) {
-    console.log(req.flash('error'));
-    //res.redirect('/login');
+	console.log(req.flash('error'));
+	//res.redirect('/login');
 });
+
+router.get('/logout',function(req,res) {
+	req.logout();
+	req.flash('loginMessage', 'You have successfully logged out.')
+	res.redirect('/auth');
+});
+
 router.route('/')
 .get(function (req, res, next) {
 	var message = ''
@@ -48,8 +55,8 @@ router.route('/')
 */
 
 var isAuthenticated = function(req, res, next) {
-  if (req.isAuthenticated()) return next();
-  res.redirect('/login');
+	if (req.isAuthenticated()) return next();
+	res.redirect('/login');
 };
 
 /*
