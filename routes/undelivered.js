@@ -46,8 +46,22 @@ router.get('/',isLoggedIn,function (req, res, next) {
 		};
 		console.log('=======================');
 		console.log(result);
-		res.render('undelivered', { title: 'Autovacstore',page:'undelivered',result: result});
+		res.render('undelivered', { title: 'Autovacstore',page:'undelivered',result: result,message:req.flash('editMessage')});
 		});		
+});
+
+router.get('/delete/:oid',isLoggedIn,function (req, res, next) {
+	var oid = req.params.oid;
+	//console.log('delete_oid........',oid);
+	database.deleteOrderById(oid, function(err,rows){
+		if (err){
+			console.log("DeleteERR",err);
+			req.flash('editMessage', err);
+	  		res.redirect('/undelivered');
+		}
+	  	req.flash('editMessage', 'Delete success.');
+	  	res.redirect('/undelivered');
+	})
 });
 
 

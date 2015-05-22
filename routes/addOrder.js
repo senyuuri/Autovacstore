@@ -1,4 +1,5 @@
 var express = require('express');
+var async   = require('async');
 var bodyParser = require('body-parser');
 var database = require('../routes/database');
 var router = express.Router();
@@ -24,7 +25,7 @@ router.get('/',isLoggedIn,function (req, res, next) {
 			if (err) console.log(err);
   			postmen = rows2;
   			console.log("postmen",postmen);
-			res.render('addOrder', {page:'addorder',title: 'Autovacstore', plist: products, staff: postmen});
+			res.render('addOrder', {page:'addorder',title: 'Autovacstore', plist: products, staff: postmen, result:'',edit:false});
 		});		
 	});
 
@@ -32,7 +33,32 @@ router.get('/',isLoggedIn,function (req, res, next) {
 
 router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
 	if (!req.body) return res.sendStatus(400);
-	// filter: list of known POST key varibles
+	var is_edit = req.body.edit;
+	var tracking_id = '';
+	// set default status as 'r'- received
+	var status = 'r';
+
+	// If in edit mode
+	if (is_edit=='true'){
+		// Delete original post
+		database.deleteOrderById(oid, function(err,rows){
+			if (err) console.log("DeleteERR",err);
+			console.log("EDIT.......original post has been succeessfully deleted.");
+  			// Retrive tracking id and status of original order
+  			database.getTrackingById(oid,function(err,tracking){
+  				if (err) console.log(err);
+  				tracking_id = tracking;
+  				database.getStatusById(oid, function(err, sta){
+  					status = sta;
+  					console.log("EditMode: USE ", tracking_id, status);
+  				});
+  			});
+
+		});
+	};
+	
+
+  	// filter: list of known POST key varibles
 	var filter = ['staff','name','contact','address'];
 	var staff = '';
 	var name = '';
@@ -40,7 +66,6 @@ router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
 	var address = '';
 	// order items in [product_id, qty] pairs
 	var items = [];
-
 	staff = req.body.staff;
 	name = req.body.name;
 	contact = req.body.contact;
@@ -64,7 +89,7 @@ router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
 	console.log('items',items);
 	// Definition
 	// exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb){}
-	database.addOrderSubmit('r',staff,name,contact,address,items,function(err,result){
+	database.addOrderSubmit(status,staff,name,contact,address,items,tracking_id,function(err,result){
 		console.log('return to addOrder.js');
 		if (err){
 			console.log(err);
@@ -75,6 +100,78 @@ router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
 	});
 });
 
+//TODO
+router.get('/edit/:oid',isLoggedIn,function (req, res, next) {
+	var result = [];
+	var oFilter = [];
+	var oid = req.params.oid;
+	console.log("WOCAO!!!!!!!");
+
+	async.series({
+		one: function(callback){
+			database.getProductList(function(err,rows){
+				callback(null,rows);
+			}) 
+		},
+		two: function(callback){
+			// 2) fn getAutoIncrementID: get customer id
+			database.getPostmanList(function(err,rows){
+				callback(null,rows);
+			})
+		},
+		three: function(callback){
+			database.getOrderById(oid, function(err,rows){
+				callback(null,rows);
+			})
+		},
+	},
+	// when one & two & three finish
+	// results is now equal to: {one: ..., two: ..., three:...}
+	function(err, results) {
+		console.log("BACK---->Edit");
+		if (err) console.log(err);
+		var products = results['one'];
+		var postmen = results['two'];
+		var rows = results['three'];
+
+		for(var i=0; i<rows.length;i++){
+			var record = rows[i];
+			// if the order has not been processed
+			if (oFilter.indexOf(record['order_id']) == -1){
+				oFilter.push(record['order_id']);
+				// INFO:
+				// items difiniton differ from that in delivered.js/undelivered.js
+				// here:           product_id + qty
+				// delivered.js:   product_name + qty
+				var items = [];
+				items.push({'pid': record['product_id'],
+							'qty': record['qty']});
+				result.push({'order_id':record['order_id'],
+							'tracking_id':record['tracking_id'],
+							'status':record['status'],
+							'customer':record['name'],
+							'customer_id':record['customer_id'],
+							'customer_contact':record['contact'],
+							'customer_address':record['address'],
+							'staff_id':record['de_staff'],
+							'items':items,
+							});
+			}
+			// if orders with the same order_id have been processed
+			else{
+				// modify last record
+				result[result.length-1]['items'].push({'pid': record['product_id'],
+														'qty': record['qty']});
+			};
+		};
+		console.log('=======================');
+		console.log(result);
+		res.render('addOrder',{page:'addorder',title: 'Autovacstore', plist: products, staff: postmen, result:result,edit:true});
+	
+	});
+
+	
+});
 
 
 function isLoggedIn(req, res, next) {

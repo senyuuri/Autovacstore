@@ -8,11 +8,54 @@ block content
 
 	script(type='text/javascript').
 		var count = 0;
-		
 		// Set dropdown text when selected 
 		// IMPT: .ready function is necessary for all JQuery codes
 		//   	 to avoid manipulating elements before the DOM tree is created                                               
 		$(document).ready(function(err) {
+			// Fill in data in edit mode
+			
+			console.log('edit:',#{edit});
+			if (#{edit}) {
+				
+				// Fill customer info
+				var data = !{JSON.stringify(result)};
+				var plist = !{JSON.stringify(plist)};
+				var data = data[0];
+				$('#realname').val(data.customer);
+				$('#contact').val(data.customer_contact);
+				$('#address').val(data.customer_address);
+				// Select delivery staff
+				var sid = data.staff_id;
+				$('#staff'+sid).attr('class','btn btn-primary btn-margin-left');
+				$('#staff_value').val(sid);
+				// Create dropdown list
+				var items = data.items;
+				//alert(plist[(items[0].pid -1)]['name']);
+				for(var i=0;i<items.length;i++){
+					alert(i);
+					if(i == 0){
+						//change first row content
+						$('.dropdown-toggle').text(plist[(items[i].pid -1)]['name']);
+						//change quantity field
+						$('#quantity').val(items[i]['qty']);
+						//change hidden field
+						$('#hide').attr('name',"PRO-"+items[i]['pid']);
+						$('#hide').attr('value',items[i]['qty']);
+					}else{
+						var create_row = $('#row1').clone(true);
+						create_row.find('.dropdown button').text(plist[(items[i].pid -1)]['name']);
+						// Reset all fields
+						create_row.find('.dropdown ul input').attr('name',"PRO-"+items[i]['pid']);
+						create_row.find('.dropdown ul input').attr('value',items[i]['qty']);
+						create_row.find('.form-group input').val(items[i]['qty']);
+						// Add cloned row to the DOM tree
+						$('#productPanel').append(create_row);
+					}
+				};
+
+			};
+			
+
 			// When select a dropdown item
 			$('.dropdown-menu a').click(function(){
 				var selText = $(this).text();
@@ -65,6 +108,10 @@ block content
 		//div(class='page-header')
 			h1 Add Order
 		form(class='form-group',method='POST')
+			if edit
+				input(type='hidden',name='edit',value='true')
+			else
+				input(type='hidden',name='edit',value='false')
 			div(class='panel panel-default')
 				div(class='panel-heading')
 					h2(class='panel-title') Order List
@@ -102,9 +149,9 @@ block content
 				div(class='panel-body',id='selstaff')
 					if staff
 						- for (var i=0; i<staff.length; i++)
-							button(type="button",class="btn btn-success btn-margin-left",sid=staff[i].staff_id)= staff[i].realname
+							button(type="button",class="btn btn-success btn-margin-left",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
 							span
-						input(type='hidden',name='staff',value="0")
+						input(type='hidden',name='staff',value="0",id='staff_value')
 					else
 						p ERR: NO DELIVERY MAN IN RECORD
 

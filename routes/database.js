@@ -65,6 +65,24 @@ exports.getUserPermission = function(username,cb){
 	});
 };
 
+
+exports.getTrackingById = function(oid,cb){
+	connection.query('SELECT tracking_id FROM orders WHERE order_id=?',oid, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_GET: getTrackingID",rows[0]['tracking_id']);
+	  cb(null,rows[0]['tracking_id']);
+	});
+};
+
+exports.getStatusById = function(oid,cb){
+	connection.query('SELECT status FROM orders WHERE order_id=?',oid, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_GET: getStatusID",rows[0]['status']);
+	  cb(null,rows[0]['status']);
+	});
+};
+
+
 exports.getProductList = function(cb){
 	connection.query('SELECT product_id, name FROM products', function(err, rows){
 	  if (err) return cb(err);
@@ -98,14 +116,14 @@ exports.getUndelivered = function(cb){
 					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
 					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
 					'INNER JOIN products ON items.product_id = products.product_id '+
-					"WHERE orders.status='r' OR orders.status='p' " +
+					"WHERE orders.is_deleted IS NULL AND (orders.status='r' OR orders.status='p') " +
 					'ORDER BY orders.order_id;'
 					,function(err, rows){
 			if (err) return cb(err);
 			console.log("DB_GET: getUndelivered");
 			cb(null,rows);
 	});
-}
+};
 
 exports.getDelivered = function(cb){
 	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
@@ -115,19 +133,37 @@ exports.getDelivered = function(cb){
 					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
 					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
 					'INNER JOIN products ON items.product_id = products.product_id '+
-					"WHERE orders.status='s' " +
+					"WHERE orders.status='s' AND orders.is_deleted IS NULL " +
 					'ORDER BY orders.order_id;'
 					,function(err, rows){
 			if (err) return cb(err);
 			console.log("DB_GET: getDelivered");
 			cb(null,rows);
 	});
-}
+};
+
+// For edition of existing orders (addOrder.js)
+exports.getOrderById = function(oid,cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, items.product_id, items.qty, customers.name, customers.contact, customers.address '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.order_id=? AND orders.is_deleted IS NULL " +
+					'ORDER BY orders.order_id;'
+					,oid,function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getSingleOrder",rows);
+			cb(null,rows);
+	});
+};
 
 
 /* FOR addOrder.js POST method
 
-   Usage: use database.addOrder(tracking_id,status,staff_id,name,contact,address,[item list],callback)
+   Usage: use database.addOrder(tracking_id,status,staff_id,name,contact,address,[item list],tracking_id,callback)
 
    Internal Steps:  STAGE 1 (obtaining necessary info for stage 2)
 					1) ft AddCustomer: customer info --> table: costomers 
@@ -138,7 +174,7 @@ exports.getDelivered = function(cb){
 					5) fn getAutoIncrementID: get order id
 					6) fn AddItem: order_id + items detail --> table: items
 */
-exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb){
+exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tracking_id,cb){
 	// V2.0, rewrote using async library
 	// async doc ref: https://github.com/caolan/async#seriestasks-callback
 	// ============  STAGE 1 ============  
@@ -147,7 +183,7 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb)
 			// 1) fn AddCustomer: customer info --> table: costomers ß
 			exports.addCustomer(name,contact,address,function(err,rows){
 				callback(null,rows);
-			})
+			}) 
 		},
 		two: function(callback){
 			// 2) fn getAutoIncrementID: get customer id
@@ -158,7 +194,11 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb)
 		three: function(callback){
 			// 3) fn genTrackingID: random 6-char string
 			exports.genTrackingID(function(err,text){
-				callback(null,text);
+				// if in edit mode, tracking id already given
+				if (tracking_id)
+					callback(null,tracking_id);
+				else
+					callback(null,text);
 			})
 		},
 	},
@@ -285,5 +325,12 @@ exports.genTrackingID = function(cb){
 	cb(null,text);
 }
 
+exports.deleteOrderById = function(oid,cb){
+	connection.query("UPDATE orders SET is_deleted='y' WHERE order_id=?",oid, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_DELETE: deleteOrderById",rows);
+	  cb(null,rows);
+	});
+};
 
 
