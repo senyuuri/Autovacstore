@@ -160,6 +160,24 @@ exports.getOrderById = function(oid,cb){
 	});
 };
 
+// for tracking.js
+exports.getOrderByTrackingId = function(tid,cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, orders.created, products.name AS product_name, '+
+					'orders.de_staff, staff.realname, staff.contact AS s_contact, items.product_id, items.qty, items.total, products.price, customers.name, customers.contact, customers.address '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.tracking_id=? AND orders.is_deleted IS NULL " +
+					'ORDER BY orders.order_id;'
+					,tid,function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getSingleOrder",rows);
+			cb(null,rows);
+	});
+};
+
 
 /* FOR addOrder.js POST method
 

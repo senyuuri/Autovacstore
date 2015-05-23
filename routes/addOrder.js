@@ -190,10 +190,15 @@ router.get('/edit/:oid',isLoggedIn,function (req, res, next) {
 														'qty': record['qty']});
 			};
 		};
-		console.log('=======================');
-		console.log(result);
-		res.render('addOrder',{page:'addorder',title: 'Autovacstore', plist: products, staff: postmen, result:result,edit:true});
-	
+		//console.log('=======================');
+		//console.log(result);
+		// get referer in http head,set sidebar highlight accordingly
+		var referer = req.headers.referer.split('/');
+		referer = referer[referer.length-1];
+		if (referer=='undelivered')
+			res.render('addOrder',{page:'undelivered',title: 'Autovacstore', plist: products, staff: postmen, result:result,edit:true});
+		else
+			res.render('addOrder',{page:'delivered',title: 'Autovacstore', plist: products, staff: postmen, result:result,edit:true});
 	});
 
 	
