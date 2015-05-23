@@ -30,9 +30,7 @@ block content
 				$('#staff_value').val(sid);
 				// Create dropdown list
 				var items = data.items;
-				//alert(plist[(items[0].pid -1)]['name']);
 				for(var i=0;i<items.length;i++){
-					alert(i);
 					if(i == 0){
 						//change first row content
 						$('.dropdown-toggle').text(plist[(items[i].pid -1)]['name']);
@@ -107,7 +105,7 @@ block content
 	div(class='container-fluid')
 		//div(class='page-header')
 			h1 Add Order
-		form(class='form-group',method='POST')
+		form(class='form-group',method='POST',action='/addOrder'+result[0]['order_id'])
 			if edit
 				input(type='hidden',name='edit',value='true')
 			else

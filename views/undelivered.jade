@@ -10,6 +10,11 @@ block content
 			 	window.location.replace("/undelivered/delete/"+index);
 			 });
 
+			 $(document).on('click', '.edit', function () {
+			 	var index = $(this).attr('clickindex');
+			 	window.location.replace("/addorder/edit/"+index);
+			 });
+
 		});
 
 	div(class='container-fluid')

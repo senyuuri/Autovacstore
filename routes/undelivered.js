@@ -44,8 +44,8 @@ router.get('/',isLoggedIn,function (req, res, next) {
 				result[result.length-1]['total'] += record['total']
 			};
 		};
-		console.log('=======================');
-		console.log(result);
+		//console.log('=======================');
+		//console.log(result);
 		res.render('undelivered', { title: 'Autovacstore',page:'undelivered',result: result,message:req.flash('editMessage')});
 		});		
 });

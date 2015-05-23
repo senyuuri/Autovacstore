@@ -155,7 +155,7 @@ exports.getOrderById = function(oid,cb){
 					'ORDER BY orders.order_id;'
 					,oid,function(err, rows){
 			if (err) return cb(err);
-			console.log("DB_GET: getSingleOrder",rows);
+			console.log("DB_GET: getSingleOrder");
 			cb(null,rows);
 	});
 };
@@ -174,10 +174,13 @@ exports.getOrderById = function(oid,cb){
 					5) fn getAutoIncrementID: get order id
 					6) fn AddItem: order_id + items detail --> table: items
 */
-exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tracking_id,cb){
+exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tid,cb){
 	// V2.0, rewrote using async library
 	// async doc ref: https://github.com/caolan/async#seriestasks-callback
 	// ============  STAGE 1 ============  
+	console.log('>>>>>>>>>>>>>>');
+	console.log('API Received:',tid,status);
+	console.log('>>>>>>>>>>>>>>');
 	async.series({
 		one: function(callback){
 			// 1) fn AddCustomer: customer info --> table: costomers ß
@@ -195,10 +198,7 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tra
 			// 3) fn genTrackingID: random 6-char string
 			exports.genTrackingID(function(err,text){
 				// if in edit mode, tracking id already given
-				if (tracking_id)
-					callback(null,tracking_id);
-				else
-					callback(null,text);
+				callback(null,text);
 			})
 		},
 	},
@@ -209,6 +209,11 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tra
 		console.log("one+two+three result..........",results);
 		var customer_id = results['two'][0]['LAST_INSERT_ID()'];
 		var tracking_id = results['three'];
+
+		if (tid) tracking_id = tid;
+		console.log('>>>>>>>>>>>>>>>>>>>>>');
+		console.log(tracking_id,status);
+		console.log('>>>>>>>>>>>>>>>>>>>>>');
 
 		// ============  STAGE 2 ============  
 		// async.waterfall: 
@@ -273,7 +278,7 @@ exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,tra
 exports.addOrder = function(tracking_id,status,staff_id,customer_id,cb){
 	connection.query("INSERT INTO orders (tracking_id,status,de_staff,customer_id) VALUES (?, ?, ?, ?);",
 						  [tracking_id,status,staff_id,customer_id], function(err, rows){
-		console.log("DB_INSERT: addOrder");
+		console.log("DB_INSERT: addOrder?",tracking_id,"?",status);
 		cb(null,rows);
 	});
 };

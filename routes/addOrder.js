@@ -25,79 +25,105 @@ router.get('/',isLoggedIn,function (req, res, next) {
 			if (err) console.log(err);
   			postmen = rows2;
   			console.log("postmen",postmen);
-			res.render('addOrder', {page:'addorder',title: 'Autovacstore', plist: products, staff: postmen, result:'',edit:false});
+			res.render('addOrder', {page:'addorder',title: 'Autovacstore', plist: products, staff: postmen, result:[{order_id:'/NA'}],edit:false});
 		});		
 	});
 
 });
 
-router.post('/',isLoggedIn,urlencodedParser, function (req, res, next) {
+router.post('/:oid',isLoggedIn,urlencodedParser, function (req, res, next) {
 	if (!req.body) return res.sendStatus(400);
 	var is_edit = req.body.edit;
 	var tracking_id = '';
 	// set default status as 'r'- received
 	var status = 'r';
+	var oid = req.params.oid;
 
-	// If in edit mode
-	if (is_edit=='true'){
-		// Delete original post
-		database.deleteOrderById(oid, function(err,rows){
-			if (err) console.log("DeleteERR",err);
-			console.log("EDIT.......original post has been succeessfully deleted.");
-  			// Retrive tracking id and status of original order
-  			database.getTrackingById(oid,function(err,tracking){
-  				if (err) console.log(err);
-  				tracking_id = tracking;
-  				database.getStatusById(oid, function(err, sta){
+	async.series({
+		one: function(callback){
+			// If in edit mode
+			if (is_edit=='true'){
+				// Delete original post
+				database.deleteOrderById(oid, function(err,rows){
+					if (err) console.log("DeleteERR",err);
+					console.log("EDIT.......original post has been succeessfully deleted.");
+					//callback(null,rows);
+					callback(null,rows);
+				});
+			}else
+				callback(null);
+		},
+		two: function(callback){
+			if (is_edit=='true'){
+				// Delete original post
+				database.getTrackingById(oid,function(err,tracking){
+  					if (err) console.log(err);
+  					tracking_id = tracking;
+  					callback(null,tracking);
+  				});
+			}else
+				callback(null);
+		},
+		three: function(callback){
+			if (is_edit=='true'){
+				database.getStatusById(oid, function(err, sta){
   					status = sta;
   					console.log("EditMode: USE ", tracking_id, status);
+  					callback(null,sta);
   				});
-  			});
-
+			}else
+				callback(null);
+		},
+	},
+	// when one & two & three finish
+	// results is now equal to: {one: ..., two: ..., three:...}
+	function(err, results) {
+		console.log('!!!!!!!!results',results);
+		// filter: list of known POST key varibles
+		var filter = ['staff','name','contact','address','edit'];
+		var staff = '';
+		var name = '';
+		var contact = '';
+		var address = '';
+		// order items in [product_id, qty] pairs
+		var items = [];
+		staff = req.body.staff;
+		name = req.body.name;
+		contact = req.body.contact;
+		address = req.body.address;
+		/*
+		console.log("POST PACKET CONTENTS:");
+		console.log("=========================");
+		console.log('delivery_staff......',staff);
+		console.log('name......',name);
+		console.log('contact......',contact);
+		console.log('address......',address);
+		*/
+		// read order quantity
+		for(var key in req.body){
+			var value = req.body[key];
+			// if not preset field --> it's an order field
+			if (filter.indexOf(key) == -1){
+				var pid = key.split('-')[1];
+				console.log('pid...',pid,'....',value);
+				items.push([pid,value]);
+			};
+		};
+		console.log('items',items);
+		// Definition
+		// exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb){}
+		database.addOrderSubmit(status,staff,name,contact,address,items,tracking_id,function(err,result){
+			console.log('return to addOrder.js');
+			if (err){
+				console.log(err);
+				res.render('addOrderFinish', { page:'addorder',title: 'ERROR', content: err+' Please contact administrator.'});
+			};
+			res.render('addOrderFinish', { page:'addorder',title: 'Your order has been succeessfully added.', 
+					content:'This page will automatically redirect to order list in 3 seconds...'});
 		});
-	};
-	
-
-  	// filter: list of known POST key varibles
-	var filter = ['staff','name','contact','address'];
-	var staff = '';
-	var name = '';
-	var contact = '';
-	var address = '';
-	// order items in [product_id, qty] pairs
-	var items = [];
-	staff = req.body.staff;
-	name = req.body.name;
-	contact = req.body.contact;
-	address = req.body.address;
-	// read order quantity
-	console.log("POST PACKET CONTENTS:");
-	console.log("=========================");
-	console.log('delivery_staff......',staff);
-	console.log('name......',name);
-	console.log('contact......',contact);
-	console.log('address......',address);
-	for(var key in req.body){
-		var value = req.body[key];
-		// if not preset field --> it's an order field
-		if (filter.indexOf(key) == -1){
-			var pid = key.split('-')[1];
-			console.log('pid...',pid,'....',value);
-			items.push([pid,value]);
-		};
-	};
-	console.log('items',items);
-	// Definition
-	// exports.addOrderSubmit = function(status,staff_id,name,contact,address,items,cb){}
-	database.addOrderSubmit(status,staff,name,contact,address,items,tracking_id,function(err,result){
-		console.log('return to addOrder.js');
-		if (err){
-			console.log(err);
-			res.render('addOrderFinish', { page:'addorder',title: 'ERROR', content: err+' Please contact administrator.'});
-		};
-		res.render('addOrderFinish', { page:'addorder',title: 'Your order has been succeessfully added.', 
-				content:'This page will automatically redirect to order list in 3 seconds...'});
 	});
+
+	
 });
 
 //TODO
@@ -146,7 +172,7 @@ router.get('/edit/:oid',isLoggedIn,function (req, res, next) {
 				var items = [];
 				items.push({'pid': record['product_id'],
 							'qty': record['qty']});
-				result.push({'order_id':record['order_id'],
+				result.push({'order_id':'/'+record['order_id'],
 							'tracking_id':record['tracking_id'],
 							'status':record['status'],
 							'customer':record['name'],
