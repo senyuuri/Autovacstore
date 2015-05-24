@@ -5,8 +5,7 @@ require('../routes/passport')(passport);
 
 /* GET home page. */
 
-router.get('/',isLoggedIn,function (req, res, next) {
-	console.log("REQ_USER:",req.user);
+router.get('/',function (req, res, next) {
   	res.render('overview', { title: 'Autovacstore', page:'overview'});
 });
 

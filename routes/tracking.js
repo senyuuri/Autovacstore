@@ -25,16 +25,17 @@ router.post('/',urlencodedParser,function (req, res, next) {
 	database.getOrderByTrackingId(tracking_id,function(err,rows){
 		if (err) console.log(err);
 		result = digestResult(rows)[0];
-		console.log('TrackingQueryResult',result);
-		console.log(result.tracking_id, result.customer_contact);
-		if (result.tracking_id == tracking_id && result.customer_contact == contact){
+		//console.log('TrackingQueryResult',result);
+		//console.log(result.tracking_id, result.customer_contact);
+		//if (result.tracking_id == tracking_id && result.customer_contact == contact){
+		if (typeof(result)!='undefined'){
 			// if both info are correct
 			var message = "Query success. 1 record(s) found."
 			res.render('tracking', { title: 'Autovacstore', page:'overview',message: message, result:result,found:true});
 		}
 		else{
 			var message = "No record found. Please check if you have entred the correct tracking id and phone number."
-			res.render('tracking', { title: 'Autovacstore', page:'overview',message: message, result:'',found:false});
+			res.render('tracking', { title: 'Autovacstore', page:'overview',message: message, result:null,found:false});
 		};
 	});
 });

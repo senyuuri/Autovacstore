@@ -17,7 +17,12 @@ var passport = require('passport');
 var flash    = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
+var database = require('./routes/database');
 
+var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
+var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: false
+}); 
 
 /* ================================================================  */
 /*  Server initialisation. (DO NOT MODIFY)                           */
@@ -159,7 +164,25 @@ var DBHandler = function() {
     }
 };
 
-
+var visitorLog = function(req, res, next){
+    var user = null;
+    var method = req.method;
+    if (typeof(req.user)!='undefined' ){
+        user = req.user.username;
+    };
+    var ip = req.headers['x-forwarded-for'] || 
+        req.connection.remoteAddress || 
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress;
+    var user_agent = req.headers['user-agent'];
+    var request = req.url;
+    console.log("Visitor:",user,method,ip,user_agent,request);
+    //add to databse
+    database.addVisitorLog(user,ip,user_agent,request,method,function(err,rows){
+        if (err) console.log(err);
+        next();
+    });   
+}   
 
 
 /* ================================================================  */
@@ -172,6 +195,7 @@ var DBHandler = function() {
 var osapp = new OpenshiftApp();
 osapp.initialize();
 osapp.start();
+osapp.app.use(visitorLog);
 
 
 var overview = require('./routes/overview');

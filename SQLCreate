@@ -73,6 +73,18 @@ FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (staff_id) REFERENCES staffs(staff_id)
 );
 
+CREATE TABLE IF NOT EXISTS visitor
+(
+oid int NOT NULL AUTO_INCREMENT,
+visit_time timestamp DEFAULT CURRENT_TIMESTAMP,
+user int,
+ip varchar(40),
+user_agent varchar(200),
+request varchar(200),
+method varchar(5),
+PRIMARY KEY (oid)
+);
+
 
 TEST VALUES
 =========================================

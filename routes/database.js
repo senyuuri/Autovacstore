@@ -356,4 +356,33 @@ exports.deleteOrderById = function(oid,cb){
 	});
 };
 
+// For overview.js, statistics
+exports.addVisitorLog = function(user,ip,user_agent,request,method,cb){
+	connection.query('INSERT INTO visitor (user,ip,user_agent,request,method) VALUES (?,?,?,?,?)',[user,ip,user_agent,request,method],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_INSERT: addVisitorLog");
+		cb(null,rows);
+	});
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

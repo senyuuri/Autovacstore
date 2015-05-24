@@ -15,10 +15,12 @@ html
 				h1 Autovacstore 
 					span
 					small Delivery Tracking System
-		if found
-			div(class="alert alert-success")= message
-		else
-			div(class="alert alert-danger")= message
+		if message
+			if found
+				div(class="alert alert-success")= message
+			else
+				div(class="alert alert-danger")= message
+
 		div(class='container-fluid')
 			form(class="form-inline",method='POST')
 				div(class="form-group")
@@ -29,59 +31,60 @@ html
 					input(type="text" class="form-control" style='margin-left: 10px;' id="phoneno" placeholder="Phone Number" name='contact')
 				button(type="submit" style='margin-left: 10px;' class="btn btn-default") Query
 		h3
-		div(class='container col-lg-4 col-md-4')
-			div(class="panel panel-default")
-				//div(class="panel-heading")= 'Order ' + result.trackingid
-				div(class="panel-body")
-					h4 Order Status
-						if (result['status']=='s')
-							span(class="label label-success" style='margin-left: 15px;') Delivered
-						if (result['status']=='r')
-							span(class="label label-warning" style='margin-left: 15px;') Undelivered
-						if (result['status']=='d')
-							span(class="label label-primary" style='margin-left: 15px;') Delivering
-					div(class='container')
-						h5 Order Tracking ID: 
-						p= result.tracking_id
-					div(class='container')
-						h5 Created on: 
-						p= result.created
-					div(class='container')
-						h5 Delivery Staff: 
-						p= result.staff + ' (Tel: ' + result.staff_contact +")"
-					div(class='container')
-						h5 Customer: 
-						p= result.customer
-					div(class='container')
-						h5 Phone Number: 
-						p= result.customer_contact
-					div(class='container')
-						h5 Address: 
-						p= result.customer_address
-		div(class='container col-lg-8 col-md-8')
-			div(class="panel panel-default")
-				table(class="table table-striped table-hover")
-					thead
-						tr
-							th #
-							th Product
-							th Quantity
-							th Price(SGD$)
-							th Total(SGD$)
-					tbody
-						- for(var i=0;i<result.items.length;i++)
+		if found
+			div(class='container col-lg-4 col-md-4')
+				div(class="panel panel-default")
+					//div(class="panel-heading")= 'Order ' + result.trackingid
+					div(class="panel-body")
+						h4 Order Status
+							if (result['status']=='s')
+								span(class="label label-success" style='margin-left: 15px;') Delivered
+							if (result['status']=='r')
+								span(class="label label-warning" style='margin-left: 15px;') Undelivered
+							if (result['status']=='d')
+								span(class="label label-primary" style='margin-left: 15px;') Delivering
+						div(class='container')
+							h5 Order Tracking ID: 
+							p= result.tracking_id
+						div(class='container')
+							h5 Created on: 
+							p= result.created
+						div(class='container')
+							h5 Delivery Staff: 
+							p= result.staff + ' (Tel: ' + result.staff_contact +")"
+						div(class='container')
+							h5 Customer: 
+							p= result.customer
+						div(class='container')
+							h5 Phone Number: 
+							p= result.customer_contact
+						div(class='container')
+							h5 Address: 
+							p= result.customer_address
+			div(class='container col-lg-8 col-md-8')
+				div(class="panel panel-default")
+					table(class="table table-striped table-hover")
+						thead
 							tr
-								td= i + 1
-								td= result.items[i]['name']
-								td= result.items[i]['qty']
-								td= result.items[i]['price']
-								td= result.items[i]['total']
+								th #
+								th Product
+								th Quantity
+								th Price(SGD$)
+								th Total(SGD$)
+						tbody
+							- for(var i=0;i<result.items.length;i++)
+								tr
+									td= i + 1
+									td= result.items[i]['name']
+									td= result.items[i]['qty']
+									td= result.items[i]['price']
+									td= result.items[i]['total']
 
-				div(class='container')
-					h3
-					span(class='col-md-5')
-					h5(class='col-md-3') Total Amount
-					span(class='col-md-5')
-					p(class='col-md-3')= "SGD$ " + result.total_price
+					div(class='container')
+						h3
+						span(class='col-md-5')
+						h5(class='col-md-3') Total Amount
+						span(class='col-md-5')
+						p(class='col-md-3')= "SGD$ " + result.total_price
 
 
