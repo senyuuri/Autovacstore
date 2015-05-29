@@ -206,7 +206,7 @@ var undelivered = require('./routes/undelivered');
 var delivered = require('./routes/delivered');
 var postman = require('./routes/postman');
 var tracking = require('./routes/tracking');    
-// var staff = require('./routes/staff');
+var staff = require('./routes/staff');
 // var products = require('./routes/products');
 
 
@@ -219,7 +219,7 @@ osapp.app.use('/undelivered',undelivered);
 osapp.app.use('/delivered',delivered);
 osapp.app.use('/postman',postman);
 osapp.app.use('/tracking',tracking);
-// osapp.app.use('/staff',staff);
+osapp.app.use('/staff',staff);
 // osapp.app.use('/products',products);
 
 

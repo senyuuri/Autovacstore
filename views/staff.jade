@@ -1,0 +1,235 @@
+extends layout
+
+block content
+	style.
+		.btn-staff{
+			margin-left: 5px;
+		}
+
+		.block-staff{
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+
+		.add-top{
+			padding-top: 15px;
+			padding-left: 0px;
+		}
+
+		.add-top-sm{
+			padding-top: 5px;
+		}
+
+		.popover-hide{
+			display:none;
+		}
+
+		.inline {
+			display:inline;
+		}
+
+		.text-sub{
+			color: rgb(119, 119, 119);
+			font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			font-size: 15px;
+		}
+
+		.staff-title{
+			margin-bottom:5px;
+			margin-top:30px;
+			border-bottom-width:0px;
+		}
+
+		.inner-form{
+			margin-left: 10px;
+		}
+
+		.popover {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 101000;
+			display: none;
+			max-width: 400px;
+			padding: 1px;
+			text-align: left;
+			white-space: normal;
+			background-color: #ffffff;
+			border: 1px solid #ccc;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			-webkit-border-radius: 6px;
+				-moz-border-radius: 6px;
+					border-radius: 6px;
+			-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+				-moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+					box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+			-webkit-background-clip: padding-box;
+				-moz-background-clip: padding;
+					background-clip: padding-box;
+		}
+
+		.test{
+			position: fixed;
+			top: 15px;
+			right: 15px;
+		}
+
+
+
+	script.
+		$(document).ready(function(err) {
+			// tab init
+			$(function () {
+				$('#myTab a:last').tab('show')
+			});
+			// popover init
+			$('.well').popover({
+				content: $('.popover-content').html(),
+				trigger: 'click',
+				html: true
+			});
+
+			//popover close button
+			$(document).on('click', '.close', function () {
+			 	$('.well').popover('hide');
+			});
+		});
+
+	div(class='container')
+		button(type="button" class="btn btn-default") Add 
+		button(type="button" class="btn btn-default btn-staff" disabled="disabled") Delete
+
+	div(class='container-fluid add-top')
+		div(class='container')
+			div(class='well well-sm col-lg-5 col-md-5' data-toggle="popover")
+				div(class="media")
+					div(class="media-left media-top")
+						a(href="#")
+							img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
+			
+					div(class="media-body")
+							span(class="label label-success") Idle
+							h3(class="media-heading add-top-sm") Pan Song
+							p(class='text-sub') Last active: 2015-11-11 09:00
+							
+
+							
+			
+
+		div(class='container')
+				div(class='well well-sm col-lg-5 col-md-5')
+					div(class="media")
+						div(class="media-left media-top")
+							a(href="#")
+								img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
+				
+						div(class="media-body")
+								h4(class="media-heading") Middle aligned media
+								p test
+
+		div(class='container')
+				div(class='well well-sm col-lg-5 col-md-5')
+					div(class="media")
+						div(class="media-left media-top")
+							a(href="#")
+								img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
+				
+						div(class="media-body")
+								h4(class="media-heading") Middle aligned media
+								p test
+
+		div(class="container popover-content popover-hide")
+				div(class='container col-lg-11 col-md-11')
+					ul(class="nav nav-tabs" role="tablist" id="myTab")
+						li(role="presentation" class="active")
+							a(href="#details" aria-controls="details" role="tab" data-toggle="tab") Details
+						li(role="presentation")
+							a(href="#password" aria-controls="password" role="tab" data-toggle="tab") Password
+						li(role="presentation")
+							a(href="#delete" aria-controls="delete" role="tab" data-toggle="tab") Delete
+				div(class="tab-content")
+					div(role="tabpanel" class="tab-pane active" id="details")
+						div(class='container col-lg-1 col-md-1')
+								span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
+						div(class='container col-lg-4 col-md-4')
+							//div(class="page-header")
+								h4(class='staff-title') Details
+							div(class='container add-top-sm')
+								h5 Username
+								p(class='text-sub') aaaaaa
+							div(class='container')
+								h5 Contact
+								p(class='text-sub') 12345678
+							div(class='container')
+								h5 Registered on
+								p(class='text-sub') 2015-05-25
+							div(class='container')
+								h5 Total Delivered
+								p(class='text-sub') 112
+							div(class='container')
+								h5 Recent Activities
+								
+								div
+						div(class='container-fluid')
+							table(class="table table-hover inner-form")
+									tr
+										td ASSSSS
+										td
+											span(class="label label-success") Idle
+										td 2015-06-13 11:11
+
+									tr
+										td ASSSSS
+										td
+											span(class="label label-success") Idle
+										td 2015-06-13 11:11
+
+									tr
+										td ASSSSS
+										td
+											span(class="label label-danger") Idle
+										td 2015-06-13 11:11
+									tr
+										td ASSSSS
+										td
+											span(class="label label-primary") Idle
+										td 2015-06-13 11:11
+									tr
+										td ASSSSS
+										td
+											span(class="label label-success") Idle
+										td 2015-06-13 11:11
+
+
+					div(role="tabpanel" class="tab-pane" id="password")
+						div(class='container col-lg-1 col-md-1')
+								span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+						div(class='container col-lg-4 col-md-4')
+							//div(class="page-header")
+								h4(class='staff-title') Details
+							
+							div(class='container')
+								h5 Password
+								
+								div
+						
+
+					div(role="tabpanel" class="tab-pane" id="delete")
+						div(class='container col-lg-1 col-md-1')
+								span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+						div(class='container col-lg-4 col-md-4')
+							//div(class="page-header")
+								h4(class='staff-title') Details
+							
+							div(class='container')
+								h5 Delete
+								
+								div
+
+
+
+
+
+
+
+

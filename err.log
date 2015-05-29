@@ -8,3 +8,13 @@
               pointHighlightStroke: "rgba(151,187,205,1)",
               data: [28, 48, 40, 19, 86, 27, 90]
             }
+
+SELECT orders.created, products.name AS product, SUM(items.total) AS total
+FROM orders
+INNER JOIN items ON orders.order_id=items.order_id
+INNER JOIN products ON items.product_id = products.product_id
+WHERE DATE(orders.created)=  STR_TO_DATE('2015-05-29', '%Y-%m-%d')
+GROUP BY products.name; 
+
+
+(this).parent().find
