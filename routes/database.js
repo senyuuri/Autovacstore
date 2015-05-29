@@ -3,12 +3,21 @@ var exports = module.exports = {};
 var mysql   = require('mysql');
 var async   = require('async');
 var bcrypt   = require('bcrypt-nodejs');
+/*
 var connection = mysql.createConnection({
   host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
   port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
   user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'admin9dbD4cT',
   password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'e3lc8i8ftG4F'
 });
+*/
+var connection = mysql.createConnection({
+  host     : process.env.OPENSHIFT_MYSQL_DB_HOST || "127.0.0.1",
+  port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
+  user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'natsuyuu',
+  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || ''
+});
+
 
 
 connection.connect(function(err) {
@@ -20,9 +29,10 @@ connection.connect(function(err) {
 	console.log('connected as id ' + connection.threadId);
 });
 
-connection.query('USE nodejs', function(err, rows) {
+// select database
+connection.query('USE test', function(err, rows) {
 	if (err) throw err;
-	console.log('SelectedDB: nodejs');
+	console.log('SelectedDB: test');
 });
 
 /* FOR login.js
@@ -366,15 +376,66 @@ exports.addVisitorLog = function(user,ip,user_agent,request,method,cb){
 };
 
 
+//get order count in last 10 days
+exports.getOrderCount = function(cb){
+	connection.query('SELECT UNIX_TIMESTAMP(created) AS date, COUNT(order_id) AS count FROM orders WHERE is_deleted IS NULL GROUP BY DATE(created) '+
+					'ORDER BY DATE(created) LIMIT 10;', function(err, rows){
+	  if (err) return cb(err);
+	  cb(null,rows);
+	});
+};
 
 
+//get total sales, group by product name
+exports.getSales = function(oid,cb){
+	connection.query('SELECT products.name AS product, SUM(items.total) AS total'+
+					'FROM items '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					'GROUP BY products.name; ', function(err, rows){
+	  	if (err) return cb(err);
+	  	cb(null,rows);
+	});
+};
 
+exports.getSalesByDate = function(date,cb){
+	connection.query('SELECT orders.created, products.name AS product, SUM(items.total) AS total ' +
+					'FROM orders ' +
+					'INNER JOIN items ON orders.order_id=items.order_id ' +
+					'INNER JOIN products ON items.product_id = products.product_id ' +
+					"WHERE DATE(orders.created)=  STR_TO_DATE(?, '%Y-%m-%d') " +
+					'GROUP BY products.name; ',date, function(err, rows){
+	  	if (err) return cb(err);
+	  	cb(null,rows);
+	});
+};
 
+// Change order status by order_id
+exports.updateStatus = function(oid,status,cb){
+	connection.query('UPDATE orders SET status=? WHERE order_id=?',status,order_id,function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_UPDATE: order: ",order_id,"// current status:",status);
+		cb(null,rows);
+	});
+};
 
+// Add status log --> db: operation
+// TODO: change db name 
+exports.addStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
+	connection.query('INSERT INTO operation (staff_id,order_id,prev_status,curr_status) VALUES (?,?,?,?,?)',[staff_id,order_id,prev_status,curr_status],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_INSERT: addStatusLog");
+		cb(null,rows);
+	});
+};
 
-
-
-
+// Get recent status change info
+exports.getStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
+	connection.query('',[staff_id,order_id,prev_status,curr_status],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_INSERT: addVisitorLog");
+		cb(null,rows);
+	});
+};
 
 
 

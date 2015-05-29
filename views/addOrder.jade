@@ -16,7 +16,6 @@ block content
 			
 			console.log('edit:',#{edit});
 			if (#{edit}) {
-				
 				// Fill customer info
 				var data = !{JSON.stringify(result)};
 				var plist = !{JSON.stringify(plist)};
@@ -50,7 +49,6 @@ block content
 						$('#productPanel').append(create_row);
 					}
 				};
-
 			};
 			
 
@@ -65,7 +63,7 @@ block content
 			});
 
 			// Change hidden field's value when input quantity
-			$('#quantity').keyup(function(){
+			$('.quantity').keyup(function(){
 				$(this).parent().parent().find('.dropdown').find('.dropdown-menu').find('#hide').attr('value',$(this).val());
 			});
 
@@ -111,7 +109,7 @@ block content
 			else
 				input(type='hidden',name='edit',value='false')
 			div(class='panel panel-default')
-				div(class='panel-heading')
+				div(class='panel-headning')
 					h2(class='panel-title') Order List
 				div(class='panel-body',id='productPanel')
 					div(class='container-fluid',id="row1")
@@ -132,7 +130,7 @@ block content
 
 						div(class='form-group col-md-2')
 							label(class='sr-only' for='quantity') Quantity
-							input(type='number',class='form-control',id='quantity',placeholder='quantity',value='')
+							input(type='number',class='form-control quantity',id='quantity',placeholder='quantity',value='')
 
 						div(class='col-md-2')
 							// Different id refers to different line! Remember to change when duplicate.

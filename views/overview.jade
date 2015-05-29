@@ -22,10 +22,23 @@ block content
 			font-size: 15px;
 		}
 
+		.stat-title{
+			margin-bottom:5px;
+			margin-top:30px;
+			border-bottom-width:0px;
+		}
+
+		.label-a{
+			padding-bottom: 5px;
+			padding-top: 5px;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+
 	script.
 		$(document).ready(function(err) {
 			var data = {
-					labels: ["January", "February", "March", "April", "May", "June", "July"],
+					labels: !{JSON.stringify(date_list)},
 					datasets: [
 						{
 							label: "My First dataset",
@@ -35,18 +48,9 @@ block content
 							pointStrokeColor: "#fff",
 							pointHighlightFill: "#fff",
 							pointHighlightStroke: "rgba(220,220,220,1)",
-							data: [65, 59, 80, 81, 56, 55, 40]
+							data: !{JSON.stringify(order_count)}
 						},
-						{
-							label: "My Second dataset",
-							fillColor: "rgba(151,187,205,0.2)",
-							strokeColor: "rgba(151,187,205,1)",
-							pointColor: "rgba(151,187,205,1)",
-							pointStrokeColor: "#fff",
-							pointHighlightFill: "#fff",
-							pointHighlightStroke: "rgba(151,187,205,1)",
-							data: [28, 48, 40, 19, 86, 27, 90]
-						}
+					
 					]
 				};
 			var options = {
@@ -61,29 +65,54 @@ block content
 		div(class="panel panel-default")
 			div(class="panel-heading") Orders
 			div(class="panel-body panel-slim")
-				h1(class='text-right digit') 10
-				p(class='text-right text-sub') 6, +40%
+				- var len = order_count.length;
+				h2(class='text-right digit')= order_count[len-1]
+				p(class='text-right text-sub')= order_count[len-2] +', ' +(order_count[len-1]-order_count[len-2])/order_count[len-2] *100 + '%' 
 
 	div(class='container col-lg-3 col-md-3')
 		div(class="panel panel-default")
 			div(class="panel-heading") Sales
 			div(class="panel-body panel-slim")
-				h1(class='text-right digit') 10
-				p(class='text-right text-sub') 6, +40%
+				h2(class='text-right digit')= sales_today
+				p(class='text-right text-sub')= sales_yesterday +', ' +(sales_today-sales_yesterday)/sales_yesterday *100 + '%'
 
 	div(class='container col-lg-3 col-md-3')
 		div(class="panel panel-default")
 			div(class="panel-heading") Revenue
 			div(class="panel-body panel-slim")
-				h1(class='text-right digit') 10
-				p(class='text-right text-sub') 6, +40%
+				h2(class='text-right digit') $-
+				p(class='text-right text-sub') $-, -%
 
 	div(class='container col-lg-3 col-md-3')
 		div(class="panel panel-default")
 			div(class="panel-heading") Taxes
 			div(class="panel-body panel-slim")
-				h1(class='text-right digit') 10
-				p(class='text-right text-sub') 6, +40%
+				h2(class='text-right digit') $-
+				p(class='text-right text-sub') $-, -%
 
-	div(class='container col-lg-8 col-md-8')
-		canvas(id="statistics" width="700" height="400")
+	div(class='container col-lg-5 col-md-5')
+		div(class="page-header stat-title")
+			h4(class='stat-title') Recent Orders
+		//
+			ul(class="nav nav-pills")
+				li(role="presentation" class="active")
+					a(href="#" ) All
+				li(role="presentation")
+					a(href="#" ) Delivered
+				li(role="presentation")
+					a(href="#" ) Undelivered
+
+		table(class='table table-hover')
+				tbody
+					tr
+						th Developing Feature
+						//
+							td 1
+							td 2222
+							td test
+
+	div(class='container col-lg-7 col-md-7')
+		div(class="page-header stat-title")
+			h4(class='stat-title') Statistics
+				small  /orders in recent 10 days
+		canvas(id="statistics" width="550" height="250")

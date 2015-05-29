@@ -61,23 +61,12 @@ FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
-CREATE TABLE IF NOT EXISTS log
-(
-order_id int NOT NULL,
-staff_id int NOT NULL,
-prev_status char(1) NOT NULL,
-curr_status char(1) NOT NULL,
-otime timestamp DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY (order_id, staff_id),
-FOREIGN KEY (order_id) REFERENCES orders(order_id),
-FOREIGN KEY (staff_id) REFERENCES staffs(staff_id)
-);
 
 CREATE TABLE IF NOT EXISTS visitor
 (
 oid int NOT NULL AUTO_INCREMENT,
 visit_time timestamp DEFAULT CURRENT_TIMESTAMP,
-user int,
+user varchar(20),
 ip varchar(40),
 user_agent varchar(200),
 request varchar(200),
@@ -85,9 +74,21 @@ method varchar(5),
 PRIMARY KEY (oid)
 );
 
+CREATE TABLE IF NOT EXISTS operation
+(
+staff_id int NOT NULL, 
+order_id int NOT NULL,
+prev_status char(1),
+curr_status char(1) NOT NULL,
+time timestamp DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (order_id, staff_id),
+FOREIGN KEY (order_id) REFERENCES orders(order_id),
+FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
 
 TEST VALUES
 =========================================
+
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('aaa','111','d','ABB','94609879');
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('bbb','111','d','BCC','94609879');
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('ccc','111','d','CDD','94609879');
@@ -98,7 +99,6 @@ INSERT INTO products (name, price) VALUES ('Vac1','10');
 INSERT INTO products (name, price) VALUES ('Vac2','20');
 INSERT INTO products (name, price) VALUES ('Vac3','30');
 INSERT INTO products (name, price) VALUES ('Vac4','40');
-
 INSERT INTO customers (name, contact, address) VALUES (
 	'pspencil',
 	'12345678',
@@ -157,10 +157,29 @@ UPDATE orders SET is_deleted='y' WHERE order_id=22;
 UPDATE orders SET status='s' WHERE order_id=22;
 
 
+// get order count by date
+SELECT DATE(created) AS date, COUNT(order_id) AS count FROM orders WHERE is_deleted IS NULL GROUP BY DATE(created)
+ORDER BY DATE(created) LIMIT 10;
+
+// get sales
+SELECT products.name AS product, SUM(items.total)
+FROM items
+INNER JOIN products ON items.product_id = products.product_id
+GROUP BY products.name;
 
 
+// get sales by date
+SELECT orders.created, products.name AS product, SUM(items.total)
+FROM orders
+INNER JOIN items ON orders.order_id=items.order_id
+INNER JOIN products ON items.product_id = products.product_id
+WHERE DATE(orders.created)=  STR_TO_DATE('2015-5-23', '%Y-%m-%d')
+GROUP BY products.name;
 
-
-
-
+// get status log
+SELECT operation.staff_id, staff.realname, operation.order_id, operation.prev_status, operation.curr_status
+FROM operation
+INNER JOIN staff ON operation.staff_id = staff.staff_id
+ORDER BY operation.time DESC
+LIMIT 10;
 

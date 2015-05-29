@@ -176,7 +176,7 @@ var visitorLog = function(req, res, next){
         req.connection.socket.remoteAddress;
     var user_agent = req.headers['user-agent'];
     var request = req.url;
-    console.log("Visitor:",user,method,ip,user_agent,request);
+    console.log("Visitor:",user,method,request);
     //add to databse
     database.addVisitorLog(user,ip,user_agent,request,method,function(err,rows){
         if (err) console.log(err);

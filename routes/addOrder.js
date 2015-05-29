@@ -39,7 +39,7 @@ router.post('/:oid',isLoggedIn,urlencodedParser, function (req, res, next) {
 	var status = 'r';
 	var oid = req.params.oid;
 
-	async.series({
+	async.parallel({
 		one: function(callback){
 			// If in edit mode
 			if (is_edit=='true'){
@@ -55,7 +55,7 @@ router.post('/:oid',isLoggedIn,urlencodedParser, function (req, res, next) {
 		},
 		two: function(callback){
 			if (is_edit=='true'){
-				// Delete original post
+				// Get original tracking ID
 				database.getTrackingById(oid,function(err,tracking){
   					if (err) console.log(err);
   					tracking_id = tracking;
@@ -66,6 +66,7 @@ router.post('/:oid',isLoggedIn,urlencodedParser, function (req, res, next) {
 		},
 		three: function(callback){
 			if (is_edit=='true'){
+				// Get original status
 				database.getStatusById(oid, function(err, sta){
   					status = sta;
   					console.log("EditMode: USE ", tracking_id, status);
@@ -74,6 +75,25 @@ router.post('/:oid',isLoggedIn,urlencodedParser, function (req, res, next) {
 			}else
 				callback(null);
 		},
+		/*
+		four: function(callback){
+			// Add status change log
+			if (is_edit=='true'){
+				// In current version, order edition page do not provide 'change status' function.
+				// Thus no status change need to record
+				callback(null);
+				// TODO
+				// if add status change function
+			}else{
+				// add initial status 'r' - received/undelivered
+				//exports.addStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
+				var staff_id = req.user.uid
+				database.addStatusLog(req.user.uid, function(err,rows){
+
+				});
+			};
+		}
+		*/
 	},
 	// when one & two & three finish
 	// results is now equal to: {one: ..., two: ..., three:...}
