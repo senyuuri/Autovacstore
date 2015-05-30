@@ -18,6 +18,7 @@ var flash    = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 var database = require('./routes/database');
+var compress = require('compression');
 
 var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
 var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -119,6 +120,7 @@ var OpenshiftApp = function() {
         self.app.use(passport.initialize());
         self.app.use(passport.session()); // persistent login sessions
         self.app.use(flash()); // use connect-flash for flash messages stored in session
+        self.app.use(compress());
 
     };
 

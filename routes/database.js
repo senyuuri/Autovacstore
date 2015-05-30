@@ -429,6 +429,7 @@ exports.addStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
 };
 
 // Get recent status change info
+// TODO
 exports.getStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
 	connection.query('',[staff_id,order_id,prev_status,curr_status],function(err, rows){
 		if (err) return cb(err);
@@ -437,6 +438,24 @@ exports.getStatusLog = function(staff_id,order_id,prev_status,curr_status,cb){
 	});
 };
 
+// FOR staff.js, get staff list
+// TODO: change getPostmanList, to exclude admin account
+exports.getStaffList = function(cb){
+	connection.query("SELECT * FROM staff WHERE previlege='d'",function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_SELECT: getStaffList");
+		cb(null,rows);
+	});
+};
+
+// FOR staff.js, get recent 5 orders by staff_id
+exports.getOrderByStaffId = function(sid,cb){
+	connection.query("SELECT * FROM orders WHERE de_staff=? AND is_deleted IS NULL ORDER BY created DESC",sid,function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_SELECT: getOrderByStaffId",sid);
+		cb(null,rows);
+	});
+};
 
 
 

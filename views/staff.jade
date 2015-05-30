@@ -78,16 +78,27 @@ block content
 
 	script.
 		$(document).ready(function(err) {
+			var count = 0;
 			// tab init
 			$(function () {
-				$('#myTab a:last').tab('show')
+				$('.selTab a:last').tab('show')
 			});
-			// popover init
-			$('.well').popover({
-				content: $('.popover-content').html(),
-				trigger: 'click',
-				html: true
+
+
+			$('.well').click(function () { 
+				var temp = $(this).attr('sid');
+				var info = $('.pop'+temp).html();
+				count +=1;
+				var ss = ('<p>11111</p>');
+				$('.well').popover({
+			        trigger: 'manual',
+			        placement: 'right',
+			        content: $('.pop1').html()
+			    });
+			    $(this).popover('show');
+
 			});
+
 
 			//popover close button
 			$(document).on('click', '.close', function () {
@@ -95,138 +106,116 @@ block content
 			});
 		});
 
+	//content: $('.popover-content').html(), $('.pop'+$(this).attr('sid')).html(),$('.pop'+temp).html(),  $('.pop'+temp).html()
 	div(class='container')
 		button(type="button" class="btn btn-default") Add 
 		button(type="button" class="btn btn-default btn-staff" disabled="disabled") Delete
 
-	div(class='container-fluid add-top')
-		div(class='container')
-			div(class='well well-sm col-lg-5 col-md-5' data-toggle="popover")
-				div(class="media")
-					div(class="media-left media-top")
-						a(href="#")
-							img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
-			
-					div(class="media-body")
-							span(class="label label-success") Idle
-							h3(class="media-heading add-top-sm") Pan Song
-							p(class='text-sub') Last active: 2015-11-11 09:00
-							
-
-							
-			
-
-		div(class='container')
-				div(class='well well-sm col-lg-5 col-md-5')
+	- for(var i=0; i<staff_list.length;i++)
+		div(class='container-fluid add-top')
+			div(class='container')
+				div(class='well well-sm col-lg-5 col-md-5' data-toggle="popover" sid= staff_list[i].staff_id)
 					div(class="media")
 						div(class="media-left media-top")
 							a(href="#")
 								img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
 				
 						div(class="media-body")
-								h4(class="media-heading") Middle aligned media
-								p test
+								span(class="label label-success") Idle
+								h3(class="media-heading add-top-sm")= staff_list[i].realname
+								p(class='text-sub') Last active: - 
 
-		div(class='container')
-				div(class='well well-sm col-lg-5 col-md-5')
-					div(class="media")
-						div(class="media-left media-top")
-							a(href="#")
-								img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
-				
-						div(class="media-body")
-								h4(class="media-heading") Middle aligned media
-								p test
+			div(class="container popover-content popover-hide " +'pop'+staff_list[i].staff_id)
+					div(class='container col-lg-11 col-md-11')
+						ul(class="nav nav-tabs selTab" role="tablist" )
+							li(role="presentation" class="active")
+								a(href="#details" aria-controls="details" role="tab" data-toggle="tab") Details
+							li(role="presentation")
+								a(href="#password" aria-controls="password" role="tab" data-toggle="tab") Password
+							li(role="presentation")
+								a(href="#delete" aria-controls="delete" role="tab" data-toggle="tab") Delete
+					div(class="tab-content")
+						div(role="tabpanel" class="tab-pane active" id="details")
+							div(class='container col-lg-1 col-md-1')
+									span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
+							div(class='container col-lg-4 col-md-4')
+								//div(class="page-header")
+									h4(class='staff-title') Details
+								div(class='container add-top-sm')
+									h5 Username
+									p(class='text-sub')= staff_list[i].username
+								div(class='container')
+									h5 Contact
+									p(class='text-sub')= staff_list[i].contact
+								div(class='container')
+									h5 Registered on
+									p(class='text-sub')= staff_list[i].reg_date
+								div(class='container')
+									h5 Total Delivered
+									p(class='text-sub')= staff_list[i].de_count
+								div(class='container')
+									h5 Recent Activities
+									
+									div
+							div(class='container-fluid')
+								table(class="table table-hover inner-form")
+										tr
+											td ASSSSS
+											td
+												span(class="label label-success") Idle
+											td 2015-06-13 11:11
 
-		div(class="container popover-content popover-hide")
-				div(class='container col-lg-11 col-md-11')
-					ul(class="nav nav-tabs" role="tablist" id="myTab")
-						li(role="presentation" class="active")
-							a(href="#details" aria-controls="details" role="tab" data-toggle="tab") Details
-						li(role="presentation")
-							a(href="#password" aria-controls="password" role="tab" data-toggle="tab") Password
-						li(role="presentation")
-							a(href="#delete" aria-controls="delete" role="tab" data-toggle="tab") Delete
-				div(class="tab-content")
-					div(role="tabpanel" class="tab-pane active" id="details")
-						div(class='container col-lg-1 col-md-1')
-								span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
-						div(class='container col-lg-4 col-md-4')
-							//div(class="page-header")
-								h4(class='staff-title') Details
-							div(class='container add-top-sm')
-								h5 Username
-								p(class='text-sub') aaaaaa
-							div(class='container')
-								h5 Contact
-								p(class='text-sub') 12345678
-							div(class='container')
-								h5 Registered on
-								p(class='text-sub') 2015-05-25
-							div(class='container')
-								h5 Total Delivered
-								p(class='text-sub') 112
-							div(class='container')
-								h5 Recent Activities
+										tr
+											td ASSSSS
+											td
+												span(class="label label-success") Idle
+											td 2015-06-13 11:11
+
+										tr
+											td ASSSSS
+											td
+												span(class="label label-danger") Idle
+											td 2015-06-13 11:11
+										tr
+											td ASSSSS
+											td
+												span(class="label label-primary") Idle
+											td 2015-06-13 11:11
+										tr
+											td ASSSSS
+											td
+												span(class="label label-success") Idle
+											td 2015-06-13 11:11
+
+
+						div(role="tabpanel" class="tab-pane" id="password")
+							div(class='container col-lg-1 col-md-1')
+									span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+							div(class='container col-lg-4 col-md-4')
+								//div(class="page-header")
+									h4(class='staff-title') Details
 								
-								div
-						div(class='container-fluid')
-							table(class="table table-hover inner-form")
-									tr
-										td ASSSSS
-										td
-											span(class="label label-success") Idle
-										td 2015-06-13 11:11
-
-									tr
-										td ASSSSS
-										td
-											span(class="label label-success") Idle
-										td 2015-06-13 11:11
-
-									tr
-										td ASSSSS
-										td
-											span(class="label label-danger") Idle
-										td 2015-06-13 11:11
-									tr
-										td ASSSSS
-										td
-											span(class="label label-primary") Idle
-										td 2015-06-13 11:11
-									tr
-										td ASSSSS
-										td
-											span(class="label label-success") Idle
-										td 2015-06-13 11:11
-
-
-					div(role="tabpanel" class="tab-pane" id="password")
-						div(class='container col-lg-1 col-md-1')
-								span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
-						div(class='container col-lg-4 col-md-4')
-							//div(class="page-header")
-								h4(class='staff-title') Details
+								div(class='container')
+									h5 Password
+									
+									div
 							
-							div(class='container')
-								h5 Password
+
+						div(role="tabpanel" class="tab-pane" id="delete")
+							div(class='container col-lg-1 col-md-1')
+									span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+							div(class='container col-lg-4 col-md-4')
+								//div(class="page-header")
+									h4(class='staff-title') Details
 								
-								div
-						
-
-					div(role="tabpanel" class="tab-pane" id="delete")
-						div(class='container col-lg-1 col-md-1')
-								span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
-						div(class='container col-lg-4 col-md-4')
-							//div(class="page-header")
-								h4(class='staff-title') Details
-							
-							div(class='container')
-								h5 Delete
-								
-								div
+								div(class='container')
+									h5 Delete
+									
+									div
 
 
+			div(class="container popover-content popover-hide pop-reserve")
+				p test
 
 
 

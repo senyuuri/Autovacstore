@@ -183,3 +183,7 @@ INNER JOIN staff ON operation.staff_id = staff.staff_id
 ORDER BY operation.time DESC
 LIMIT 10;
 
+SELECT * FROM orders WHERE de_staff=1 AND is_deleted IS NULL ORDER BY created DESC
+
+
+
