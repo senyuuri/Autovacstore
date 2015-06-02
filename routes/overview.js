@@ -7,12 +7,12 @@ require('../routes/passport')(passport);
 
 /* GET home page. */
 
-router.get('/',function (req, res, next) {
+router.get('/',isLoggedIn,function (req, res, next) {
 	var today = new Date();
 	var date_list = [];
 	// generate date list for chart
 	for(var i=0; i<10; i++){
-		date_list.push(today.toISOString().split('T')[0].split('-').slice(1,3).join('-'));
+		date_list.unshift(today.toISOString().split('T')[0].split('-').slice(1,3).join('-'));
 		today = new Date(today - 1*24*60*60*1000);
 	}
 	async.parallel({
@@ -109,6 +109,7 @@ function isLoggedIn(req, res, next) {
 		}
 	// if they aren't redirect them to the home page
 	}else{
+		req.session.returnTo = req.originalUrl; 
 		req.flash('loginMessage', 'You have not logged in.');
 		res.redirect('/auth')
 	};

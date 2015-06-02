@@ -122,6 +122,7 @@ block content
 							ul(class='dropdown-menu' role='menu' aria-labelledby='dropdownMenu1')
 								if plist
 									- for (var i=0; i<plist.length; i++)
+										if plist[i]['is_deleted'] != 'y'
 											li(role='presentation')
 											a(role='menuitem' tabindex=plist[i].product_id href='#')= plist[i].name
 								else
@@ -132,7 +133,7 @@ block content
 
 						div(class='form-group col-md-2')
 							label(class='sr-only' for='quantity') Quantity
-							input(type='number',class='form-control quantity',id='quantity',placeholder='quantity',value='')
+							input(type='number',class='form-control quantity',id='quantity',placeholder='quantity',value='',required='')
 
 						div(class='col-md-2')
 							// Different id refers to different line! Remember to change when duplicate.
@@ -157,14 +158,14 @@ block content
 				div(class='panel-heading')
 					h2(class='panel-title') Add Customer Information
 				div(class='panel-body')
-					div(class='form-group')
+					div(class='form-group col-lg-3 col-md-3')
 						label(for='realname',class='control-label') Name
-						input(type='text',class='form-control',name='name',placeholder='',id='realname')
-					div(class='form-group')
+						input(type='text',class='form-control',name='name',placeholder='',id='realname',required='')
+					div(class='form-group col-lg-3 col-md-3')
 						label(class='control-label',for='contact') Contact Number
-						input(type='text',class='form-control',name='contact',placeholder='',id='contact')
-					div(class='form-group')
+						input(type='text',class='form-control',name='contact',placeholder='',id='contact',required='')
+					div(class='form-group col-lg-6 col-md-6')
 						label(for='address',class='control-label') Address
-						textarea(class='form-control',rows='3', name='address',id='address')
+						textarea(class='form-control',rows='3', name='address',id='address',required='')
 
 			button(type='submit',class='btn btn-default',value='Submit') Submit

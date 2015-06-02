@@ -4,28 +4,32 @@ var passport = require('passport');
 require('../routes/passport')(passport); 
 var bodyParser = require( 'body-parser' );
 var app = express();
+
 var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
 var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
 	extended: false
 }); 
 
 /*
-var LocalStrategy   = require('passport-local').Strategy;
-passport.use(new LocalStrategy(
-	function(username, password, done) {
-		console.log("LocalStrategy working...");
-		return done(null, { id: 1, username: 'Joe', password: 'schmo'});
-	}
-));
 
-router.post('/',urlencodedParser,function(req,res,next){
-	console.log(req.body);
-});
-*/
 router.post('/',urlencodedParser,passport.authenticate('local-login', { successRedirect: '/',
 	  failureRedirect: '/auth',
 	  failureFlash: true })
 );
+*/
+router.post('/',urlencodedParser,function(req, res, next) {passport.authenticate('local-login',  function(err, user, info) {
+	    if (err) { return next(err); }
+	    if (!user) { return res.redirect('/auth'); }
+	    req.logIn(user, function(err) {
+		    if (err) { return next(err); }
+		    // redirect to referer page
+		   	res.redirect(req.session.returnTo || '/');
+		});
+  	})(req, res, next)
+});
+
+
+
 
 router.get('/loginerror',function(req,res) {
 	console.log(req.flash('error'));
@@ -33,6 +37,7 @@ router.get('/loginerror',function(req,res) {
 });
 
 router.get('/logout',function(req,res) {
+	req.session.returnTo = '/'
 	req.logout();
 	req.flash('loginMessage', 'You have successfully logged out.')
 	res.redirect('/auth');
@@ -40,7 +45,7 @@ router.get('/logout',function(req,res) {
 
 router.route('/')
 .get(function (req, res, next) {
-	var message = ''
+	var message = '';
 	res.render('login', {message:req.flash('loginMessage')});
 })
 /*
@@ -54,21 +59,6 @@ router.route('/')
 });
 */
 
-var isAuthenticated = function(req, res, next) {
-	if (req.isAuthenticated()) return next();
-	res.redirect('/login');
-};
 
-/*
-//router.get('/:id(\\d+)', function(req, res) {
-router.route('/:id').get(function (req, res, next) {
-  res.send('respond user Info userid:' + req.params.id);
-});
-
-// respond with "Hello World!" on the homepage
-router.route('/hello').get(function (req, res, next) {
-  res.send('Hello World!');
-});
-*/
 
 module.exports = router;

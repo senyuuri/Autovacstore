@@ -13,7 +13,7 @@ html
 		link(rel='stylesheet' href='/static/dashboard.css')
 		script(src='/static/jquery-2.1.4.min.js')
 		script(src='/static/bootstrap.min.js')
-			
+		
 		meta(name="viewport",content="width=device-width, initial-scale=1")
 	body
 		div(class='navbar navbar-inverse navbar-fixed-top')
@@ -31,8 +31,9 @@ html
 							a(href='/settings') Settings
 						li
 							a(href='/auth/logout') Logout
-					form(class='navbar-form navbar-right')
-						input(type="text",class="form-control",placeholder="Search...")
+					//
+						form(class='navbar-form navbar-right')
+							input(type="text",class="form-control",placeholder="Search...")
 		//TODO: Highlight current page
 		div(class='container-fluid')
 			div(class='row')
@@ -76,14 +77,15 @@ html
 						//==============================
 						if page == 'products'
 							li(class="active")
-								a(href="/products") Products	
+								a(href="/product") Products	
 						else
 							li
-								a(href="/products") Products
-							
+								a(href="/product") Products	
 								span(class="sr-only") (Current)
 			div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
 				block content
+
+		
 
 
 

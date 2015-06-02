@@ -2,6 +2,8 @@ extends layout
 
 block content
 	style.
+		BODY {background:none transparent;}
+
 		.btn-staff{
 			margin-left: 5px;
 		}
@@ -74,68 +76,110 @@ block content
 			right: 15px;
 		}
 
+		.non-clickable{
+			pointer-events: none;
+		}
 
+		.iframe-fix{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
 
 	script.
 		$(document).ready(function(err) {
-			var count = 0;
+			// get the actual width+height of wells
+			// setup iframe accordingly
+			var width = $('.well:first').attr('offsetWidth');
+			var height = $('.well:first').attr('offsetWidth');
+			$('.staff-well').css('width', width);
+			$('.staff-well').css('height', height);
+			// set transparency
+			
 			// tab init
 			$(function () {
-				$('.selTab a:last').tab('show')
+				$('.selTab a:first').tab('show');
 			});
 
-
+			
 			$('.well').click(function () { 
 				var temp = $(this).attr('sid');
-				var info = $('.pop'+temp).html();
-				count +=1;
-				var ss = ('<p>11111</p>');
-				$('.well').popover({
-			        trigger: 'manual',
-			        placement: 'right',
-			        content: $('.pop1').html()
-			    });
-			    $(this).popover('show');
+				//
+				// Important Note:
+				//---------------------------
+				// Popover function will not update its 'content' once it has been initialised
+				// Thus it is important to register a new event lister with new content every time when clicking
+				//      *it is more important to unbind all jquery events ahead otherwise multiple click event will confuse jquery
+				//
+				// In memory of my precious Saturday 
+
+				// unregister previous event listener
+				$(this).off( "click");
+
+				$(this).popover({
+					trigger: 'click',
+					html:true,
+					content: function(){
+						return $('.pop'+temp).html();
+					}
+				});
+
+				$(this).popover('show');
 
 			});
-
-
-			//popover close button
-			$(document).on('click', '.close', function () {
-			 	$('.well').popover('hide');
+			
+			$('#btn-add').click(function(){
+				$(location).attr('href','/staff/add');
+				
 			});
+
+			
+			/*
+			$(document).click(function (e) {
+				if (!$(e.target).is(".well")) {
+					if ($('.popover').has(e.target).length == 0 || $(e.target).is('.close')) {
+						//alert(e.target.tagName);
+						$('.popover').parent().find('.well').popover('hide');
+
+					}
+				};
+			});
+			*/
+			
+
 		});
+
 
 	//content: $('.popover-content').html(), $('.pop'+$(this).attr('sid')).html(),$('.pop'+temp).html(),  $('.pop'+temp).html()
 	div(class='container')
-		button(type="button" class="btn btn-default") Add 
+		button(type="button" class="btn btn-default button-add" id='btn-add') Add 
 		button(type="button" class="btn btn-default btn-staff" disabled="disabled") Delete
 
 	- for(var i=0; i<staff_list.length;i++)
 		div(class='container-fluid add-top')
 			div(class='container')
+				//iframe(class='staff-well' src="/overview" allowtransparency="true")
 				div(class='well well-sm col-lg-5 col-md-5' data-toggle="popover" sid= staff_list[i].staff_id)
 					div(class="media")
 						div(class="media-left media-top")
 							a(href="#")
 								img(class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;")
-				
-						div(class="media-body")
-								span(class="label label-success") Idle
-								h3(class="media-heading add-top-sm")= staff_list[i].realname
-								p(class='text-sub') Last active: - 
+						div(class="media-body non-clickable")
+								span(class="label label-success non-clickable") Idle
+								h3(class="media-heading add-top-sm non-clickable")= staff_list[i].realname
+								p(class='text-sub non-clickable') Last active: - 
 
 			div(class="container popover-content popover-hide " +'pop'+staff_list[i].staff_id)
 					div(class='container col-lg-11 col-md-11')
 						ul(class="nav nav-tabs selTab" role="tablist" )
 							li(role="presentation" class="active")
-								a(href="#details" aria-controls="details" role="tab" data-toggle="tab") Details
+								a(href="#details"+staff_list[i].staff_id aria-controls="details" role="tab" data-toggle="tab") Details
 							li(role="presentation")
-								a(href="#password" aria-controls="password" role="tab" data-toggle="tab") Password
+								a(href="#password"+staff_list[i].staff_id aria-controls="password" role="tab" data-toggle="tab") Password
 							li(role="presentation")
-								a(href="#delete" aria-controls="delete" role="tab" data-toggle="tab") Delete
+								a(href="#delete"+staff_list[i].staff_id aria-controls="delete" role="tab" data-toggle="tab") Delete
 					div(class="tab-content")
-						div(role="tabpanel" class="tab-pane active" id="details")
+						div(role="tabpanel" class="tab-pane active" id="details"+staff_list[i].staff_id)
 							div(class='container col-lg-1 col-md-1')
 									span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
 							div(class='container col-lg-4 col-md-4')
@@ -159,38 +203,22 @@ block content
 									div
 							div(class='container-fluid')
 								table(class="table table-hover inner-form")
+									//if activity.length!=0
+									- for(var j=0;j<activity[i].length;j++)
 										tr
-											td ASSSSS
-											td
-												span(class="label label-success") Idle
-											td 2015-06-13 11:11
+											td= activity[i][j]['tracking_id']
+											if (activity[i][j]['status'] == 'r')
+												td
+													span(class="label label-warning") Undelivered
+											if (activity[i][j]['status'] == 's')
+												td
+													span(class="label label-success") Success
+											td= activity[i][j]['created']
+									
 
-										tr
-											td ASSSSS
-											td
-												span(class="label label-success") Idle
-											td 2015-06-13 11:11
-
-										tr
-											td ASSSSS
-											td
-												span(class="label label-danger") Idle
-											td 2015-06-13 11:11
-										tr
-											td ASSSSS
-											td
-												span(class="label label-primary") Idle
-											td 2015-06-13 11:11
-										tr
-											td ASSSSS
-											td
-												span(class="label label-success") Idle
-											td 2015-06-13 11:11
-
-
-						div(role="tabpanel" class="tab-pane" id="password")
+						div(role="tabpanel" class="tab-pane" id="password"+staff_list[i].staff_id)
 							div(class='container col-lg-1 col-md-1')
-									span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+									span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
 							div(class='container col-lg-4 col-md-4')
 								//div(class="page-header")
 									h4(class='staff-title') Details
@@ -201,9 +229,9 @@ block content
 									div
 							
 
-						div(role="tabpanel" class="tab-pane" id="delete")
+						div(role="tabpanel" class="tab-pane" id="delete"+staff_list[i].staff_id)
 							div(class='container col-lg-1 col-md-1')
-									span(class="glyphicon glyphicon-remove pull-right delete",style='margin-left: 10px;',aria-hidden="true")
+									span(class="glyphicon glyphicon-remove pull-right close",style='margin-left: 10px;',aria-hidden="true")
 							div(class='container col-lg-4 col-md-4')
 								//div(class="page-header")
 									h4(class='staff-title') Details
@@ -212,12 +240,6 @@ block content
 									h5 Delete
 									
 									div
-
-
-			div(class="container popover-content popover-hide pop-reserve")
-				p test
-
-
 
 
 

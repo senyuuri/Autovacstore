@@ -1,4 +1,109 @@
 extends layout
 
 block content
-	h3 product page
+	style.
+		.add-top{
+			padding-top: 15px;
+
+		}
+
+		.add-btn-left{
+			margin-left: 10px;
+
+		}
+
+		.color-del{
+			color: #FF6699;
+		}
+
+		.color-yes{
+			color: #339933;
+		}
+
+
+	script.
+		$(document).ready(function(err) {
+
+			$(document).on('click', '.delete', function () {
+				var index = $(this).attr('clickindex');
+				window.location.replace("/product/delete/"+index);
+			 });
+
+			/*
+			$(document).on('click', '.edit', function () {
+				var index = $(this).attr('clickindex');
+				window.location.replace("/product/edit/"+index);
+			});
+			*/
+
+			$(document).on('click', '.restore', function () {
+				var index = $(this).attr('clickindex');
+				window.location.replace("/product/restore/"+index);
+			});
+
+			$('#btn-view').click(function(){
+				$(location).attr('href','/product/viewdel');
+			});
+
+			$('#btn-back').click(function(){
+				$(location).attr('href','/product');
+				
+			});
+
+
+		});
+
+	if message.length>0
+		div(class='container')
+			if (message == 'Delete success.')||(message == 'Restore success.')
+				div(class="alert alert-success")= message
+			else
+				div(class="alert alert-danger")= message
+
+	div(class='container')
+		if view_del != true
+			button(type="button" class="btn btn-default button-add" id='btn-add') Add 
+			button(type="button" class="btn btn-default button-add add-btn-left" id='btn-view') View deleted products
+		else
+			button(type="button" class="btn btn-default button-add" id='btn-back') Back
+
+	div(class='container add-top')
+		table(class='table table-striped')
+			thead
+				tr
+					th ID
+					th Product
+					th Price(SGD$)
+					th Available
+					th Operations
+			tbody
+				if plist
+					- for (var i=0;i<plist.length;i++)
+						if view_del != true
+							if plist[i]['is_deleted'] != 'y'
+								tr
+									th= plist[i]['product_id']
+									td= plist[i]['name']
+									td= plist[i]['price']
+									td(class='color-yes') Yes
+									td 
+										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=plist[i]['product_id'])
+										span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=plist[i]['product_id'])
+						else
+							if plist[i]['is_deleted'] == 'y'
+								tr
+									th= plist[i]['product_id']
+									td= plist[i]['name']
+									td= plist[i]['price']
+									td(class='color-del') No (deleted)
+									if view_del != true
+										td 
+											span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=plist[i]['product_id'])
+											span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=plist[i]['product_id'])
+									else										
+										td
+											span(class="glyphicon glyphicon-repeat restore",aria-hidden="true",clickindex=plist[i]['product_id'])
+								
+				else
+					tr
+						th NO PRODUCT RECORD

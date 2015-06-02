@@ -1,4 +1,10 @@
 
+drop table staffs;
+drop table orders;
+drop table operation;
+drop table operation2;
+drop table log;
+
 
 Initialisation (MySQL)
 ===================================================

@@ -2,13 +2,18 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var async   = require('async');
+var bodyParser = require('body-parser');
 var database = require('../routes/database');
 require('../routes/passport')(passport);
 
 
+var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
+var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
+	extended: false
+}); 
 /* GET staff page. */
 
-router.get('/',function (req, res, next) {
+router.get('/',isLoggedIn,function (req, res, next) {
 	var staff_list = [];
 	// staff recent activities
 	var staff_act = [];
@@ -29,12 +34,54 @@ router.get('/',function (req, res, next) {
     		if (err) console.log(err);
     		console.log('async-map',rows);
     		staff_act = rows;
+    		res.render('staff', { title: 'Autovacstore', page:'staff', staff_list: staff_list, activity: staff_act});
 		});
-
-		res.render('staff', { title: 'Autovacstore', page:'staff', staff_list: staff_list, activity: staff_act});
 	});
 	
 });
+
+
+router.get('/add',isLoggedIn,function (req, res, next) {
+	res.render('addStaff', {page:'staff',title: 'Autovacstore',message:req.flash('addStaff')||null});
+})
+
+router.post('/add',urlencodedParser,isLoggedIn,function (req, res, next) {
+	var username = req.body.username;
+	var password = req.body.password;
+	var con_password = req.body.con_password;
+	var realname = req.body.name;
+	var contact = req.body.contact;
+	database.ifUserExist(username,function(err,rows){
+		if (rows.length == 1){
+			// if username already been used, show warning
+			req.flash('addStaff', 'Username already been used.');
+			res.redirect('/staff/add');
+		}else{
+			if (password != con_password){
+				// if password and password cofirm
+				req.flash('addStaff', 'Password entered are not identical.');
+				res.redirect('/staff/add');
+			}else{
+				// Add account to database
+				database.addStaff(username,password,realname,contact,function(err, rows){
+					if (err){
+						console.log(err);
+						req.flash('addStaff', "An internal error occured. Please contact the system administrator.");
+						res.redirect('/staff/add');
+					}else{
+						res.render('addStaffFinish', { page:'staff',title: 'New account has been created succeessfully. ', 
+							content:'This page will automatically redirect to staff list in 3 seconds...'});;
+					};
+					
+				});
+			}	
+		}
+	});
+	
+})
+
+
+
 
 
 function getOrderByStaff(raw, callback){
@@ -60,6 +107,7 @@ function isLoggedIn(req, res, next) {
 		}
 	// if they aren't redirect them to the home page
 	}else{
+		req.session.returnTo = req.originalUrl;
 		req.flash('loginMessage', 'You have not logged in.');
 		res.redirect('/auth')
 	};

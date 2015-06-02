@@ -93,14 +93,6 @@ exports.getStatusById = function(oid,cb){
 };
 
 
-exports.getProductList = function(cb){
-	connection.query('SELECT product_id, name FROM products', function(err, rows){
-	  if (err) return cb(err);
-	  console.log("DB_GET: getProductList");
-	  cb(null,rows);
-	});
-};
-
 exports.getPostmanList = function(cb){
 	connection.query('SELECT staff_id, realname FROM staff', function(err, rows){
 	  if (err) return cb(err);
@@ -366,6 +358,22 @@ exports.deleteOrderById = function(oid,cb){
 	});
 };
 
+exports.deleteProductById = function(pid,cb){
+	connection.query("UPDATE products SET is_deleted='y' WHERE product_id=?",pid, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_DELETE: deleteProductById",rows);
+	  cb(null,rows);
+	});
+};
+
+exports.restoreProductById = function(pid,cb){
+	connection.query("UPDATE products SET is_deleted=null WHERE product_id=?",pid, function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_DELETE: deleteProductById",rows);
+	  cb(null,rows);
+	});
+};
+
 // For overview.js, statistics
 exports.addVisitorLog = function(user,ip,user_agent,request,method,cb){
 	connection.query('INSERT INTO visitor (user,ip,user_agent,request,method) VALUES (?,?,?,?,?)',[user,ip,user_agent,request,method],function(err, rows){
@@ -457,9 +465,31 @@ exports.getOrderByStaffId = function(sid,cb){
 	});
 };
 
+// FOR staff.js - /staff/add POST
+exports.addStaff = function(username,password,name,contact,cb){
+	connection.query("INSERT INTO staff (username, password, previlege, realname, contact) VALUES (?,?,?,?,?);",[username,password,'d',name,contact],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_INSERT: addStaff");
+		cb(null,rows);
+	});
+};
+
+exports.getProductList = function(cb){
+	connection.query('SELECT * FROM products', function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_GET: getProductList");
+	  cb(null,rows);
+	});
+};
 
 
-
+exports.updateUserPassword = function(username,password,cb){
+	connection.query('UPDATE staff SET password=? WHERE username=?',[password,username], function(err, rows){
+	  if (err) return cb(err);
+	  console.log("DB_GET: updateUserPassword");
+	  cb(null,rows);
+	});
+};
 
 
 

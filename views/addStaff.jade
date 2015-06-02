@@ -1,42 +1,59 @@
 extends layout
 
 block content
+	style.
+		.add-top{
+			padding-top: 15px;
+		}
 
-	div(class='container')
-		div(class="page-header")
-			h1 Staff Registration
-		form(class="form-horizontal",method="POST")
-			div(class="panel panel-default")
-				div(class="panel-heading")
-					h2(class='panel-title') Account Information
-				div(class="panel-body")
-					div(class="form-group")
-						label(for="username",class="control-label") Username
-						input(type="text",class="form-control,col-sm-4",name="username",placeholder="")
-					div(class="form-group")
-						label(for="password",class="control-label") Password
-						input(type="password",class="form-control,col-sm-4",name="password",placeholder="")
-					div(class="form-group")
-						label(for="passwordconfirm",class="control-label") Password Confirmation
-						input(type="password",class="form-control,col-sm-4",name="passwordconfirm",placeholder="")
-					div(class="form-group")
-						label(for="passwordconfirm",class="control-label") Account Privilege
-							label
-								input(type="radio-inline",name="optionsRadios",value="admin",checked='true') 
-								p Administrator
-							label
-								input(type="radio-inline",name="optionsRadios",value="staff") 
-								p Staff
+		.add-left{
+			margin-left: 8px;
+		}
 
-			div(class="panel panel-default")
-				div(class="panel-heading")
-					h2(class='panel-title') Personal Profile
-				div(class="panel-body")
-					div(class="form-group")
-						label(for="name",class="control-label") Name
-						input(type="text",class="form-control,,col-sm-4",name="realname",placeholder="")
-					div(class="form-group")
-						label(for="remarks",class="control-label") Remarks
-						textarea(class="form-control,,col-sm-4",rows="3", name="remarks")
 
-			button(type="submit",class="btn btn-default",value="Submit") Submit
+	div(class='container-fluid')
+		form(class='form-group',method='POST',action='/staff/add')
+
+			div(class='panel panel-default')
+						div(class='panel-heading')
+							h2(class='panel-title') Add New Staff
+						div(class='panel-body')
+							if (message.length >0)
+								div(class="form-group")
+									div(class="alert alert-danger")= message
+							
+							div(class='row')
+								div(class='form-group')
+									div(class='col-lg-3')
+										label(for='realname',class='control-label') Username
+										input(type='text',class='form-control',name='username',placeholder='',id='realname')
+										span
+							div(class='row')
+								div(class='form-group add-top')
+									div(class='col-lg-3')
+										label(for='realname',class='control-label') Password
+										input(type='password',class='form-control',name='password',placeholder='',id='realname')
+										span
+
+							div(class='row')
+								div(class='form-group add-top')
+									div(class='col-lg-3')
+										label(for='realname',class='control-label') Confirm Password
+										input(type='password',class='form-control',name='con_password',placeholder='',id='realname')
+										span
+
+							div(class='row')
+								div(class='form-group add-top')
+									div(class='col-lg-3')
+										label(for='realname',class='control-label') Name
+										input(type='text',class='form-control',name='name',placeholder='',id='realname')
+										span
+							div(class='row')
+								div(class='form-group add-top')		
+									div(class='col-lg-3')
+										label(class='control-label',for='contact') Contact Number
+										input(type='text',class='form-control',name='contact',placeholder='',id='contact')
+										span
+
+			button(type='submit',class='btn btn-default',value='Submit') Submit
+			button(type='button',class='btn btn-default add-left') Cancel

@@ -238,6 +238,7 @@ function isLoggedIn(req, res, next) {
 		}
 	// if they aren't redirect them to the home page
 	}else{
+		req.session.returnTo = req.originalUrl; 
 		req.flash('loginMessage', 'You have not logged in.');
 		res.redirect('/auth')
 	};

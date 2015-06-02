@@ -114,6 +114,7 @@ var OpenshiftApp = function() {
         self.app.set('styles', express.static(__dirname, 'styles'));
         self.app.set('view engine', 'jade');
         self.app.use('/static', express.static(__dirname + '/static'));
+        self.app.use('/fonts', express.static(__dirname + '/fonts'));
         // Passport initialisation
         self.app.use(cookieParser());
         self.app.use(session({ secret: 'wcmwcmwcmwcmbendan' })); // session secret
@@ -202,26 +203,26 @@ osapp.app.use(visitorLog);
 
 var overview = require('./routes/overview');
 var login = require('./routes/login');
-// var settings = require('./routes/settings');
+var settings = require('./routes/settings');
 var addOrder = require('./routes/addOrder');
 var undelivered = require('./routes/undelivered');
 var delivered = require('./routes/delivered');
 var postman = require('./routes/postman');
 var tracking = require('./routes/tracking');    
 var staff = require('./routes/staff');
-// var products = require('./routes/products');
+var product = require('./routes/product');
 
 
 
 osapp.app.use('/', overview);
 osapp.app.use('/auth',login);
-//osapp.app.use('/settings',settings);
+osapp.app.use('/settings',settings);
 osapp.app.use('/addOrder', addOrder);
 osapp.app.use('/undelivered',undelivered);
 osapp.app.use('/delivered',delivered);
 osapp.app.use('/postman',postman);
 osapp.app.use('/tracking',tracking);
 osapp.app.use('/staff',staff);
-// osapp.app.use('/products',products);
+osapp.app.use('/product',product);
 
 
