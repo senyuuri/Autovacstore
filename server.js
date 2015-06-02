@@ -211,7 +211,7 @@ var postman = require('./routes/postman');
 var tracking = require('./routes/tracking');    
 var staff = require('./routes/staff');
 var product = require('./routes/product');
-
+var invoice = require('./routes/invoice');
 
 
 osapp.app.use('/', overview);
@@ -224,5 +224,5 @@ osapp.app.use('/postman',postman);
 osapp.app.use('/tracking',tracking);
 osapp.app.use('/staff',staff);
 osapp.app.use('/product',product);
-
+osapp.app.use('/invoice',invoice);
 
