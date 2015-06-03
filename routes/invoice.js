@@ -7,11 +7,17 @@ var app = express();
 var sys = require('sys')
 var exec = require('child_process').exec;
 var child;
+var phantom = require('phantom');
+
 
 var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
 var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
 	extended: false
 }); 
+
+// Phantom.js init
+//var webPage = require('webpage');
+//var page = webPage.create();
 
 
 router.get('/',function (req, res, next) {
@@ -23,7 +29,21 @@ router.get('/',function (req, res, next) {
 		  console.log('exec error: ' + error);
 		}
 	});
+
+	phantom.create(function (ph) {
+		ph.createPage(function (page) {
+			page.open("http://www.google.com", function (status) {
+					console.log("opened google? ", status);
+					page.evaluate(function () { return document.title; }, function (result) {
+						console.log('Page title is ' + result);
+						ph.exit();
+					});
+			});
+	  });
+	});
+
 	res.render('receipt', {page:'addorder',title: 'Autovacstore'});
+
 });
 
 
