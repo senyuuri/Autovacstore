@@ -3,6 +3,10 @@ var bodyParser = require('body-parser');
 var database = require('../routes/database');
 var router = express.Router();
 var app = express();
+// http://nodejs.org/api.html#_child_processes
+var sys = require('sys')
+var exec = require('child_process').exec;
+var child;
 
 var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
 var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -10,7 +14,15 @@ var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bod
 }); 
 
 
-router.get('/',isLoggedIn,function (req, res, next) {
+router.get('/',function (req, res, next) {
+	// executes `pwd'
+	child = exec("pwd", function (error, stdout, stderr) {
+		console.log('stdout: ' + stdout);
+		console.log('stderr: ' + stderr);
+		if (error !== null) {
+		  console.log('exec error: ' + error);
+		}
+	});
 	res.render('receipt', {page:'addorder',title: 'Autovacstore'});
 });
 

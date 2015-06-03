@@ -1,3 +1,21 @@
-extends layout
+html
+	head
+		//
+			uncomment when deploy
+			link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
+			link(rel='stylesheet' href='http://getbootstrap.com/examples/dashboard/dashboard.css')
+			script(src="https://code.jquery.com/jquery-2.1.4.min.js")
+			script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
 
-block content
+		link(rel='stylesheet' href='/static/bootstrap.min.css')
+		link(rel='stylesheet' href='/static/dashboard.css')
+		script(src='/static/jquery-2.1.4.min.js')
+		script(src='/static/bootstrap.min.js')
+			
+		style(type="text/css").
+			.modal-footer {   border-top: 0px; }
+		meta(name="viewport",content="width=device-width, initial-scale=1")
+
+	body
+		p Invoice test
+		
