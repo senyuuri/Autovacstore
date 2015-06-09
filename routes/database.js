@@ -419,9 +419,9 @@ exports.getSalesByDate = function(date,cb){
 
 // Change order status by order_id
 exports.updateStatus = function(oid,status,cb){
-	connection.query('UPDATE orders SET status=? WHERE order_id=?',status,order_id,function(err, rows){
+	connection.query('UPDATE orders SET status=? WHERE order_id=?',[status,oid],function(err, rows){
 		if (err) return cb(err);
-		console.log("DB_UPDATE: order: ",order_id,"// current status:",status);
+		console.log("DB_UPDATE: order: ",oid,"// current status:",status);
 		cb(null,rows);
 	});
 };

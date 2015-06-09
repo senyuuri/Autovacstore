@@ -15,6 +15,11 @@ block content
 			 	window.location.replace("/addorder/edit/"+index);
 			 });
 
+			 $(document).on('click', '.invoice', function () {
+			 	var index = $(this).attr('clickindex');
+			 	window.open("/invoice/"+index);
+			 });
+
 		});
 
 	div(class='container-fluid')
@@ -61,7 +66,7 @@ block content
 									td
 										//button(type="button",class="btn btn-default",aria-label="Left Align")
 										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=result[i]['order_id'])
-										span(class="glyphicon glyphicon-indent-left invoice",style='margin-left: 10px;',aria-hidden="true",,clickindex=result[i]['order_id'])
+										span(class="glyphicon glyphicon-indent-left invoice",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['tracking_id'])
 										span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['order_id'])
 						else
 							th(scope='row') NO DELIVERED ORDER

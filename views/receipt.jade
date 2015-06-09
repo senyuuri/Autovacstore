@@ -9,13 +9,158 @@ html
 
 		link(rel='stylesheet' href='/static/bootstrap.min.css')
 		link(rel='stylesheet' href='/static/dashboard.css')
+		link(rel="stylesheet" type="text/css" media="print" href="/static/bootstrap.min.css") 
 		script(src='/static/jquery-2.1.4.min.js')
 		script(src='/static/bootstrap.min.js')
 			
 		style(type="text/css").
 			.modal-footer {   border-top: 0px; }
+
 		meta(name="viewport",content="width=device-width, initial-scale=1")
 
 	body
-		p Invoice test
-		
+		style.
+
+			h4{
+				margin-top:0px;
+			}
+
+			.inline{
+				display:table-cell;
+			}
+
+			.add-top{
+				margin-top:5px;
+			}
+
+			.add-top-lg{
+				margin-top:20px;
+			}
+
+			thead tbody th td {
+					font-size: 10px;
+			}
+
+			@media print {
+				p {
+					font-size:10px;
+					margin-bottom: 0px;
+				}
+				.payment{
+					margin-left:10px;
+				}
+
+				html body table {
+					font-size: 11px;
+				}
+
+			}
+			
+		div(class='container')
+			div(class='container')
+				img(src='/static/logo.jpg')
+				h4(class='pull-right') Invoice/ Cash Sale
+			div(class='add-top')
+				div(class='container col-xs-8 col-lg-8')
+					p 2 Jurong East Street 21, #05-26F IMM Building Singapore 609601
+					p Website: http://www.autovacstore.com/
+					p Facebook: https://www.facebook.com/Autovacstore
+					p Email: admin@autovacstore.com
+					p Tel: +65 9138 3300
+
+				div(class='container col-xs-4 col-lg-4')
+						p Co. Reg. No. 201430638E
+						p GST No. 201430638E	
+						p(class='add-top')= 'Invoice No.' + result.order_id + result.tracking_id
+						p= 'Date:' + result.created
+
+		div(class='container add-top-lg')
+			div(class="panel panel-default")
+				div(class="panel-body")
+					h6 Customer 
+						small= result.customer
+					h6 Email 
+						small test@wwww.comß
+					h6 Contact No.
+						small= result.customer_contact
+					h6 Address
+						small= result.customer_address
+
+		div(class='container')
+			table(class='table table-bordered')
+				thead
+					tr
+						th Item No
+						th Description
+						th Quantity
+						th Unit Price
+						th Amount
+				tbody
+					- for(var i=0;i<result.items.length;i++)
+						tr
+							td= result.items[i]['pid']
+							td= result.items[i]['name']
+							td= result.items[i]['qty']
+							td= '$' + result.items[i]['price'].toFixed(2)
+							td= '$' + result.items[i]['total'].toFixed(2)
+					
+			div(class='container')
+				h5
+				span(class='col-xs-8')
+				h6(class='col-xs-2')= 'SUB-TOTAL'
+				h5(class='col-xs-2')= '$'+result.total_price.toFixed(2)
+				span(class='col-xs-8')
+				h6(class='col-xs-2')= 'GST'
+				h5(class='col-xs-2')= '$'+(result.total_price*0.07).toFixed(2)
+				span(class='col-xs-8')
+				h6(class='col-xs-2')= 'TOTAL'
+				h5(class='col-xs-2')= '$'+(result.total_price*1.07).toFixed(2)
+
+				
+
+
+		div(class='container add-top-lg')
+				div(class='col-xs-3 add-top-lg')
+					p ________________________
+					p          Issued By
+				div(class='col-xs-3 add-top-lg')
+					p ________________________
+					p          Received By
+				div(class='col-xs-1 payment')
+					div(class='inline')
+						div(class="checkbox")
+							label
+								input(type="checkbox")
+					div(class='inline')
+						h5
+							span(class="label label-default") CASH
+				div(class='col-xs-1 payment')
+					div(class='inline')
+						div(class="checkbox")
+							label
+								input(type="checkbox")
+					div(class='inline')
+						h5
+							span(class="label label-default") NETS
+				div(class='col-xs-2 payment')
+					div(class='inline')
+						div(class="checkbox")
+							label
+								input(type="checkbox")
+					div(class='inline')
+						h5
+							span(class="label label-default") CREDIT CARD
+
+				div(class='col-xs-1 payment')
+					div(class='inline')
+						div(class="checkbox")
+							label
+								input(type="checkbox")
+					div(class='inline')
+						h5
+							span(class="label label-default") CHEQUE
+
+
+
+
+

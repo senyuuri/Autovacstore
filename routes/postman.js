@@ -46,10 +46,24 @@ router.get('/',isLoggedIn,function (req, res, next) {
   		};
   		console.log('=======================');
   		console.log(result);
-		res.render('postman', { title: 'Autovacstore',page:'delivered',result: result});
+		res.render('postman', { title: 'Autovacstore',page:'delivered',result: result,message:req.flash('postmanMsg')});
 		});		
 });
 
+router.get('/s/:oid/:status',isLoggedIn,function (req, res, next) {
+  var oid = req.params.oid;
+  var status = req.params.status;
+  database.updateStatus(oid,status,function(err,rows){
+    if (err){
+      console.log(err);
+      req.flash('postmanMsg', "Status update failed. Please contact the system administrator.");
+      res.redirect('/postman');
+    }else{
+      req.flash('postmanMsg', "Status updated.");
+      res.redirect('/postman');
+    };
+  });
+});
 
 function isLoggedIn(req, res, next) {
 
@@ -59,7 +73,7 @@ function isLoggedIn(req, res, next) {
     if (req.user.role == 'd')
       return next();
     else{
-      req.flash('loginMessage', 'ERR: NO PERMISSION');
+      req.flash('loginMessage', 'ERR: PANEL NOT AVAILABLE FOR ADMIN ACCOUNT');
       res.redirect('/auth')
     }
   // if they aren't redirect them to the home page

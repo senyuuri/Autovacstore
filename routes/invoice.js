@@ -3,49 +3,80 @@ var bodyParser = require('body-parser');
 var database = require('../routes/database');
 var router = express.Router();
 var app = express();
-// http://nodejs.org/api.html#_child_processes
-var sys = require('sys')
-var exec = require('child_process').exec;
-var child;
-var phantom = require('phantom');
-
-
 var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
 var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
 	extended: false
 }); 
 
-// Phantom.js init
-//var webPage = require('webpage');
-//var page = webPage.create();
 
-
-router.get('/',function (req, res, next) {
-	// executes `pwd'
-	child = exec("pwd", function (error, stdout, stderr) {
-		console.log('stdout: ' + stdout);
-		console.log('stderr: ' + stderr);
-		if (error !== null) {
-		  console.log('exec error: ' + error);
+router.get('/:tid',function (req, res, next) {
+	var tracking_id = req.params.tid;
+	database.getOrderByTrackingId(tracking_id,function(err,rows){
+		if (err) console.log(err);
+		result = digestResult(rows)[0];
+		//console.log('TrackingQueryResult',result);
+		//console.log(result.tracking_id, result.customer_contact);
+		//if (result.tracking_id == tracking_id && result.customer_contact == contact){
+		if (typeof(result)!='undefined'){
+			// if both info are correct
+			res.render('receipt', { title: 'Autovacstore', page:'overview',result:result});
 		}
+		else{
+			res.write('ERR: Record not found');
+		};
 	});
-
-	phantom.create(function (ph) {
-		ph.createPage(function (page) {
-			page.open("http://www.google.com", function (status) {
-					console.log("opened google? ", status);
-					page.evaluate(function () { return document.title; }, function (result) {
-						console.log('Page title is ' + result);
-						ph.exit();
-					});
-			});
-	  });
-	});
-
-	res.render('receipt', {page:'addorder',title: 'Autovacstore'});
-
 });
 
+
+var digestResult = function(rows){
+	var result = [];
+	var oFilter = [];
+	var total_price=0.0;
+	for(var i=0; i<rows.length;i++){
+		var record = rows[i];
+		// if the order has not been processed
+		if (oFilter.indexOf(record['order_id']) == -1){
+			oFilter.push(record['order_id']);
+			// INFO:
+			// items difiniton differ from that in delivered.js/undelivered.js
+			// here:           product_id + qty
+			// delivered.js:   product_name + qty
+			var items = [];
+			total_price += record['total'];
+			items.push({'pid': record['product_id'],
+						'name': record['product_name'],
+						'qty': record['qty'],
+						'price': record['price'],
+						'total':record['total']});
+			result.push({'order_id':record['order_id'],
+						'tracking_id':record['tracking_id'],
+						'status':record['status'],
+						'customer':record['name'],
+						'customer_id':record['customer_id'],
+						'customer_contact':record['contact'],
+						'customer_address':record['address'],
+						'staff':record['realname'],
+						'staff_contact':record['s_contact'],
+						'staff_id':record['de_staff'],
+						'created':record['created'],
+						'items':items,
+						'total_price':total_price
+						});
+		}
+		// if orders with the same order_id have been processed
+		else{
+			// modify last record
+			result[result.length-1]['items'].push({'pid': record['product_id'],
+													'name': record['product_name'],
+													'qty': record['qty'],
+													'price': record['price'],
+													'total':record['total']});
+			result[result.length-1]['total_price'] += record['total'];
+		};
+
+	};
+	return result;
+}
 
 function isLoggedIn(req, res, next) {
 
