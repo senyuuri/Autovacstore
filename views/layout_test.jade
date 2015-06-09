@@ -1,0 +1,99 @@
+doctype html
+html
+	head
+		title= title
+		//
+			uncomment when deploy
+			link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
+			link(rel='stylesheet' href='http://getbootstrap.com/examples/dashboard/dashboard.css')
+			script(src="https://code.jquery.com/jquery-2.1.4.min.js")
+			script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
+
+		link(rel='stylesheet' href='/static/materialize.min.css')
+		link(rel='stylesheet' href='/static/bootstrap.min.css')
+		link(rel='stylesheet' href='/static/dashboard.css')
+
+		script(src='/static/jquery-2.1.4.min.js')
+		script(src='/static/bootstrap.min.js')
+		script(src='/static/materialize.min.js')
+		
+		meta(name="viewport",content="width=device-width, initial-scale=1")
+	body
+		div(class='navbar navbar-inverse navbar-fixed-top')
+			div(class='container-fluid')
+				div(class='navbar-header')
+					button(type='button',class='navbar-toggle collapsed',data-toggle='collapse',data-target='#navbar')
+						span(class='sr-only') Toggle navigation
+						span(class='icon-bar')
+						span(class='icon-bar')
+						span(class='icon-bar')
+					a(class='navbar-brand' href='/') Autovacstore
+				div(class='collapse navbar-collapse',id='navbar')
+					ul(class='nav navbar-nav navbar-right')
+						li
+							a(href='/settings') Settings
+						li
+							a(href='/auth/logout') Logout
+					//
+						form(class='navbar-form navbar-right')
+							input(type="text",class="form-control",placeholder="Search...")
+
+		//TODO: Highlight current page
+		div(class='container-fluid')
+			div(class='row')
+				div(class="col-sm-3 col-md-2 sidebar")
+					ul(class="nav nav-sidebar")
+						//==============================
+						if page == 'overview'
+							li(class="active")
+								a(href="/") Overview 
+						else 
+							li
+								a(href="/") Overview 
+						//==============================
+						if page == 'addorder'
+							li(class="active")
+								a(href="/addorder") Add Order
+						else
+							li
+								a(href="/addorder") Add Order
+						//==============================
+						if page == 'undelivered'
+							li(class="active")
+								a(href="/undelivered") Undelivered
+						else
+							li
+								a(href="/undelivered") Undelivered
+						//==============================
+						if page == 'delivered'
+							li(class="active")
+								a(href="/delivered") Delivered
+						else	
+							li
+								a(href="/delivered") Delivered
+						//==============================
+						if page == 'staff'
+							li(class="active")
+								a(href="/staff") Staff
+						else
+							li
+								a(href="/staff") Staff
+						//==============================
+						if page == 'products'
+							li(class="active")
+								a(href="/product") Products	
+						else
+							li
+								a(href="/product") Products	
+								span(class="sr-only") (Current)
+
+			
+			div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
+				a(class="btn-floating btn-large waves-effect waves-light red")
+					i(class="mdi-content-add")
+				block content
+
+		
+
+
+

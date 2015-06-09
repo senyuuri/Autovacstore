@@ -114,7 +114,7 @@ var OpenshiftApp = function() {
         self.app.set('styles', express.static(__dirname, 'styles'));
         self.app.set('view engine', 'jade');
         self.app.use('/static', express.static(__dirname + '/static'));
-        self.app.use('/fonts', express.static(__dirname + '/fonts'));
+        self.app.use('/font', express.static(__dirname + '/font'));
         // Passport initialisation
         self.app.use(cookieParser());
         self.app.use(session({ secret: 'wcmwcmwcmwcmbendan' })); // session secret

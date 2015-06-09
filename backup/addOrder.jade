@@ -2,57 +2,11 @@ extends layout
 
 block content
 	style.
+
 		.btn-staff{
 			margin-left: 5px;
 		}
 
-		.timeline {
-			list-style: none;
-		}
-		.timeline > li {
-			margin-bottom: 60px;
-		}
-
-		.add-bottom{
-			padding-bottom: 50px;
-			padding-top: 15px;
-		}
-
-		.step-font{
-			color: #777;
-			font-family: Helvetica,Arial,sans-serif;
-		}
-
-		/* for Desktop */
-		@media ( min-width : 640px ){
-			.timeline > li {
-				overflow: hidden;
-				margin: 0;
-				position: relative;
-			}
-			.timeline-date {
-				width: 110px;
-				float: left;
-				margin-top: 20px;
-			}
-			.timeline-content {
-				width: 75%;
-				float: left;
-				border-left: 3px #e5e5d1 solid;
-				padding-left: 30px;
-			}
-			.timeline-content:before {
-				content: '';
-				width: 12px;
-				height: 12px;
-				background: #6fc173;
-				position: absolute;
-				left: 106px;
-				top: 24px;
-				border-radius: 100%;
-				
-			}
-		}
 
 	script(type='text/javascript').
 		var count = 0;
@@ -156,53 +110,6 @@ block content
 				input(type='hidden',name='edit',value='true')
 			else
 				input(type='hidden',name='edit',value='false')
-
-			ul(class="timeline")
-				li
-					h3(class="timeline-date step-font") Step 1
-					div(class="timeline-content")
-						h3 Order List
-						div(class='container add-bottom')
-							table(class="table table-hover")
-								thead
-									th #
-									th Product 
-									th Quantity
-									th 
-								tbody
-
-				li
-					h3(class="timeline-date step-font") Step 2
-					div(class="timeline-content")
-						h3 Select Delivery Staff
-						p 
-						div(class='container add-bottom')
-							if staff
-								- for (var i=0; i<staff.length; i++)
-									button(type="button",class="btn btn-success btn-staff",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
-									span
-								input(type='hidden',name='staff',value="0",id='staff_value')
-							else
-								p ERR: NO DELIVERY MAN IN RECORD
-
-				li
-					h3(class="timeline-date step-font") Step 3
-					div(class="timeline-content")
-						h3 Add Customer Information
-						p 
-						div(class='container add-bottom')
-							div(class='form-group col-lg-3 col-md-3')
-								label(for='realname',class='control-label') Name
-								input(type='text',class='form-control',name='name',placeholder='',id='realname',required='')
-							div(class='form-group col-lg-3 col-md-3')
-								label(class='control-label',for='contact') Contact Number
-								input(type='text',class='form-control',name='contact',placeholder='',id='contact',required='')
-							div(class='form-group col-lg-6 col-md-6')
-								label(for='address',class='control-label') Address
-								textarea(class='form-control',rows='3', name='address',id='address',required='')
-
-   
-   
 			div(class='panel panel-default')
 				div(class='panel-heading')
 					h2(class='panel-title') Order List
