@@ -6,6 +6,7 @@ block content
 			margin-left: 5px;
 		}
 
+
 		.timeline {
 			list-style: none;
 		}
@@ -14,13 +15,47 @@ block content
 		}
 
 		.add-bottom{
-			padding-bottom: 50px;
+			padding-bottom: 100px;
 			padding-top: 15px;
+		}
+
+		.add-left{
+			margin-left:10px;
 		}
 
 		.step-font{
 			color: #777;
 			font-family: Helvetica,Arial,sans-serif;
+		}
+
+		.product-item{
+			margin-left:10px;
+		}
+
+		#btn-submit{
+			margin-top:30px;
+		}
+
+		#btn-cancel{
+			position:relative;
+			margin-left:20px;
+			
+		}
+
+		#hide{
+			visibility:hidden;
+		}
+
+		h3{
+			color: #777;
+			font-family: Helvetica,Arial,sans-serif;
+		}
+
+		ul.dropdown-menu{
+			position:relative;
+			left:0px;
+			bottom:0px;
+			overflow-y:visible;
 		}
 
 		/* for Desktop */
@@ -30,17 +65,22 @@ block content
 				margin: 0;
 				position: relative;
 			}
+
 			.timeline-date {
 				width: 110px;
 				float: left;
 				margin-top: 20px;
 			}
+
 			.timeline-content {
+				z-index:0;
 				width: 75%;
 				float: left;
 				border-left: 3px #e5e5d1 solid;
 				padding-left: 30px;
+				
 			}
+
 			.timeline-content:before {
 				content: '';
 				width: 12px;
@@ -55,47 +95,64 @@ block content
 		}
 
 	script(type='text/javascript').
-		var count = 0;
+		var count = 1;
+		// products that are already in the table
+		var filter = [];
 		// Set dropdown text when selected 
 		// IMPT: .ready function is necessary for all JQuery codes
 		//   	 to avoid manipulating elements before the DOM tree is created                                               
 		$(document).ready(function(err) {
 			// Fill in data in edit mode
-			
+			var plist = !{JSON.stringify(plist)};
+
+			function deleteRow(e){
+				alert(e);
+			};
+
 			console.log('edit:',#{edit});
 			if (#{edit}) {
 				// Fill customer info
 				var data = !{JSON.stringify(result)};
-				var plist = !{JSON.stringify(plist)};
+				//var plist = !{JSON.stringify(plist)};
 				var data = data[0];
 				$('#realname').val(data.customer);
 				$('#contact').val(data.customer_contact);
 				$('#address').val(data.customer_address);
 				// Select delivery staff
 				var sid = data.staff_id;
-				$('#staff'+sid).attr('class','btn btn-primary btn-margin-left');
+				$('#staff'+sid).attr('class','btn btn-primary btn-staff');
 				$('#staff_value').val(sid);
-				// Create dropdown list
+				// Create table
 				var items = data.items;
 				for(var i=0;i<items.length;i++){
-					if(i == 0){
-						//change first row content
-						$('.dropdown-toggle').text(plist[(items[i].pid -1)]['name']);
-						//change quantity field
-						$('#quantity').val(items[i]['qty']);
-						//change hidden field
-						$('#hide').attr('name',"PRO-"+items[i]['pid']);
-						$('#hide').attr('value',items[i]['qty']);
-					}else{
-						var create_row = $('#row1').clone(true);
-						create_row.find('.dropdown button').text(plist[(items[i].pid -1)]['name']);
-						// Reset all fields
-						create_row.find('.dropdown ul input').attr('name',"PRO-"+items[i]['pid']);
-						create_row.find('.dropdown ul input').attr('value',items[i]['qty']);
-						create_row.find('.form-group input').val(items[i]['qty']);
-						// Add cloned row to the DOM tree
-						$('#productPanel').append(create_row);
-					}
+					var row = $("<tr id='ROW"+ count +"'>");
+					var value = items[i]['qty'];
+					var product = items[i]['pid'];
+					var name = "PRO-"+product;
+					filter.push(name);
+					// Column 1: index
+					row.append('<td> '+count);
+					row.append('<td> '+plist[product-1]['name']);
+					row.append('<td> '+value);
+					row.append('<td> $'+plist[product-1]['price']);
+					row.append('<td> $'+plist[product-1]['price']*value);
+					var td = $("<td>");
+					td.append("<i class='small mdi-action-delete' clickid='"+ count +"'"+ " id='label"+count+"'>");
+					td.append("<input type='hidden' name='"+ name +"' value="+ value+">")
+					// add eventlister to delete icon
+					$(document).on('click', '#label'+count, function (e) {
+					 	var clickid = $(this).attr('clickid');	
+						$("#ROW"+clickid).remove();
+						var name = $(this).parent().find('input').attr('name');
+						filter.splice(filter.indexOf(name),1);
+				 	});
+
+					row.append(td);
+					$('#order-table').append(row);
+					// Reset quantity
+					$('#quantity').val('');
+					$('#hide').attr('value',0);
+					count++;
 				};
 			};
 			
@@ -103,10 +160,12 @@ block content
 			// When select a dropdown item
 			$('.dropdown-menu a').click(function(){
 				var selText = $(this).text();
+
 				console.log("I'm running! Don't kill me! QAQ");
 				$(this).parent().parent().find('.dropdown-toggle').text(selText);
 				// Change the hidden field's 'name' attribute
 				$(this).parent().find('#hide').attr('name','PRO-' + $(this).attr('tabindex'));
+				$(this).parent().find('#hide').attr('product', $(this).attr('tabindex'));
 
 			});
 
@@ -115,33 +174,61 @@ block content
 				$(this).parent().parent().find('.dropdown').find('.dropdown-menu').find('#hide').attr('value',$(this).val());
 			});
 
+
 			// Clone the DOM subtree for new rows in table
 			$('#addproduct').click(function(){
-				var create_row = $('#row1').clone(true);
-				create_row.find('.dropdown button').text('Select a product');
-				// Reset all fields
-				create_row.find('.dropdown ul input').attr('name','na');
-				create_row.find('.dropdown ul input').attr('value','0');
-				create_row.find('.form-group input').val(0);
-				// Add cloned row to the DOM tree
-				$('#productPanel').append(create_row);
-				// TODO change attributes
+				// Get values from input area
+				var name = $('#hide').attr('name');
+				var value = $('#hide').attr('value');
+				var product = $('#hide').attr('product');
+				if (product=='na'){
+					alert("Please select a product.");
+				}
+				else if(value==0 || value==''){
+					alert("Please enter a valid quantity");
+				} 
+				else if(filter.indexOf(name) > -1){
+					alert("Product already exists.")
+				}
+				else{
+					// Create row
+					var row = $("<tr id='ROW"+ count +"'>");
+					// Column 1: index
+					row.append('<td> '+count);
+					row.append('<td> '+plist[product-1]['name']);
+					row.append('<td> '+value);
+					row.append('<td> $'+plist[product-1]['price']);
+					row.append('<td> $'+plist[product-1]['price']*value);
+					var td = $("<td>");
+					td.append("<i class='small mdi-action-delete' clickid='"+ count +"'"+ " id='label"+count+"'>");
+					td.append("<input type='hidden' name='"+ name +"' value="+ value+">")
+					// add eventlister to delete icon
+					$(document).on('click', '#label'+count, function (e) {
+					 	var clickid = $(this).attr('clickid');	
+						$("#ROW"+clickid).remove();
+						var name = $(this).parent().find('input').attr('name');
+						filter.splice(filter.indexOf(name),1);
+				 	});
+
+					row.append(td);
+					$('#order-table').append(row);
+					// Reset quantity
+					$('#quantity').val('');
+					$('#hide').attr('value',0);
+					count++;
+					filter.push(name);
+				}
 			});
 
-			// Remove a row from table 
-			$('.delete').click(function(){
-				// pevent deleting the first row
-				if ($('.dropdown-menu').length != 1)
-					$(this).parent().parent().remove();
-			});
+			
 
 			// When select delivery staff
 			$('#selstaff button').click(function(){
 				// Reset all color
 				// TODO:change color according to individual status
-				$('#selstaff button').attr('class','btn btn-success');
+				$('#selstaff button').attr('class','btn btn-success btn-staff');
 				// highlight selected button(blue)
-				$(this).attr('class','btn btn-primary');
+				$(this).attr('class','btn btn-primary btn-staff');
 				// Change value in the hidden field
 				$('#selstaff input').attr('value',$(this).attr('sid'));
 			});
@@ -159,24 +246,54 @@ block content
 
 			ul(class="timeline")
 				li
-					h3(class="timeline-date step-font") Step 1
+					h4(class="timeline-date step-font") Step 1
 					div(class="timeline-content")
 						h3 Order List
-						div(class='container add-bottom')
-							table(class="table table-hover")
+						div(class='container-fluid add-bottom')
+							table(id='order-table' class="table table-hover table-stripped")
 								thead
-									th #
-									th Product 
-									th Quantity
-									th 
+									tr
+										th #
+										th Product 
+										th Quantity
+										th Unit Price
+										th Total
+										th Delete
 								tbody
+									
+										
+							div(class='container-fluid')
+								div(class='dropdown')
+									button(class='col-md-4 btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-expanded='true')
+										|Select a product
+										span(class='caret')
+									ul(class='dropdown-menu' role='menu' aria-labelledby='dropdownMenu1')
+										if plist
+											- for (var i=0; i<plist.length; i++)
+												if plist[i]['is_deleted'] != 'y'
+													li(role='presentation')
+													a(class='product-item' role='menuitem' tabindex=plist[i].product_id href='#')= plist[i].name
+										else
+											li(role='presentation')
+												a(role='menuitem' tabindex='-1' href='#')
+													| ERR:NO PRODUCT
+										i(type='hidden',name='na',value="0",product='na',id='hide')
+
+								div(class='form-group col-md-2')
+									label(class='sr-only' for='quantity') Quantity
+									input(type='number',class='form-control quantity',id='quantity',placeholder='quantity',value='')
+
+								div(class='col-md-2')
+									// Different id refers to different line! Remember to change when duplicate.
+									button(type='button',class='btn btn-default',id='addproduct') Add
+
 
 				li
-					h3(class="timeline-date step-font") Step 2
+					h4(class="timeline-date step-font") Step 2
 					div(class="timeline-content")
 						h3 Select Delivery Staff
 						p 
-						div(class='container add-bottom')
+						div(class='container add-bottom' id='selstaff')
 							if staff
 								- for (var i=0; i<staff.length; i++)
 									button(type="button",class="btn btn-success btn-staff",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
@@ -186,79 +303,25 @@ block content
 								p ERR: NO DELIVERY MAN IN RECORD
 
 				li
-					h3(class="timeline-date step-font") Step 3
+					h4(class="timeline-date step-font") Step 3
 					div(class="timeline-content")
 						h3 Add Customer Information
 						p 
-						div(class='container add-bottom')
+						div(class='container')
 							div(class='form-group col-lg-3 col-md-3')
 								label(for='realname',class='control-label') Name
 								input(type='text',class='form-control',name='name',placeholder='',id='realname',required='')
+						div(class='container')
 							div(class='form-group col-lg-3 col-md-3')
 								label(class='control-label',for='contact') Contact Number
 								input(type='text',class='form-control',name='contact',placeholder='',id='contact',required='')
+						div(class='container')
 							div(class='form-group col-lg-6 col-md-6')
 								label(for='address',class='control-label') Address
 								textarea(class='form-control',rows='3', name='address',id='address',required='')
+						div(id='btn-submit' class='container')
+							button( type='submit',class='btn btn-default add-left',value='Submit') Submit
+							a(id='btn-cancel',href='/undelivered', class='add-left') Cancel
 
-   
-   
-			div(class='panel panel-default')
-				div(class='panel-heading')
-					h2(class='panel-title') Order List
-				div(class='panel-body',id='productPanel')
-					div(class='container-fluid',id="row1")
-						div(class='dropdown')
-							button(class='col-md-3 btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-expanded='true')
-								|Select a product
-								span(class='caret')
-							ul(class='dropdown-menu' role='menu' aria-labelledby='dropdownMenu1')
-								if plist
-									- for (var i=0; i<plist.length; i++)
-										if plist[i]['is_deleted'] != 'y'
-											li(role='presentation')
-											a(role='menuitem' tabindex=plist[i].product_id href='#')= plist[i].name
-								else
-									li(role='presentation')
-										a(role='menuitem' tabindex='-1' href='#')
-											| ERR:NO PRODUCT
-								input(type='hidden',name='na',value="0",id='hide')
 
-						div(class='form-group col-md-2')
-							label(class='sr-only' for='quantity') Quantity
-							input(type='number',class='form-control quantity',id='quantity',placeholder='quantity',value='',required='')
 
-						div(class='col-md-2')
-							// Different id refers to different line! Remember to change when duplicate.
-							button(type='button',class='btn btn-default delete',id='d1') Delete
-				div(class='container-fluid')
-					button(type='button',class='btn btn-primary',style='margin-left: 15px;',id='addproduct') Add
-				h3
-
-			div(class='panel panel-default')
-				div(class='panel-heading')
-					h2(class='panel-title') Choose Delivery Staff
-				div(class='panel-body',id='selstaff')
-					if staff
-						- for (var i=0; i<staff.length; i++)
-							button(type="button",class="btn btn-success btn-staff",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
-							span
-						input(type='hidden',name='staff',value="0",id='staff_value')
-					else
-						p ERR: NO DELIVERY MAN IN RECORD
-
-			div(class='panel panel-default')
-				div(class='panel-heading')
-					h2(class='panel-title') Add Customer Information
-				div(class='panel-body')
-					div(class='form-group col-lg-3 col-md-3')
-						label(for='realname',class='control-label') Name
-						input(type='text',class='form-control',name='name',placeholder='',id='realname',required='')
-					div(class='form-group col-lg-3 col-md-3')
-						label(class='control-label',for='contact') Contact Number
-						input(type='text',class='form-control',name='contact',placeholder='',id='contact',required='')
-					div(class='form-group col-lg-6 col-md-6')
-						label(for='address',class='control-label') Address
-						textarea(class='form-control',rows='3', name='address',id='address',required='')
-
-			button(type='submit',class='btn btn-default',value='Submit') Submit

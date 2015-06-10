@@ -73,8 +73,8 @@ block content
 		div(class="panel panel-default")
 			div(class="panel-heading") Sales
 			div(class="panel-body panel-slim")
-				h2(class='text-right digit')= sales_today
-				p(class='text-right text-sub')= sales_yesterday +', ' +(sales_today-sales_yesterday)/sales_yesterday *100 + '%'
+				h2(class='text-right digit')= "$ " +sales_today.toFixed(2)
+				p(class='text-right text-sub')= "$ "+ sales_yesterday.toFixed(2) +', ' +(sales_today-sales_yesterday)/sales_yesterday *100 + '%'
 
 	div(class='container col-lg-3 col-md-3')
 		div(class="panel panel-default")
