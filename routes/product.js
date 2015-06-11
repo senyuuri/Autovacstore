@@ -2,9 +2,13 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var async   = require('async');
+var bodyParser = require('body-parser');
 var database = require('../routes/database');
 require('../routes/passport')(passport);
-
+var jsonParser = bodyParser.json();       // to support JSON-encoded bodies
+var urlencodedParser = bodyParser.urlencoded({     // to support URL-encoded bodies
+	extended: false
+}); 
 /* GET staff page. */
 
 router.get('/viewdel',isLoggedIn,function (req, res, next) {
@@ -21,6 +25,23 @@ router.get('/',isLoggedIn,function (req, res, next) {
 	});
 });
 
+router.get('/add',isLoggedIn,function (req, res, next) {
+	database.getProductList(function(err,rows){
+		if (err) console.log(err);
+		res.render('addProduct', { title: 'Autovacstore', page:'products',plist:rows, message:req.flash('productMsg'), view_del:false});
+	})
+});
+
+
+router.post('/add',urlencodedParser,isLoggedIn,function (req, res, next) {
+	var name = req.body.name;
+	var price = req.body.price;
+	database.addProduct(name,price,function(err,rows){
+		if (err) console.log(err);
+		req.flash('productMsg', "New product has been added to database.");
+		res.redirect('/product');
+	})
+});
 
 
 router.get('/delete/:pid',isLoggedIn,function (req, res, next) {

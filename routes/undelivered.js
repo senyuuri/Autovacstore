@@ -64,6 +64,67 @@ router.get('/delete/:oid',isLoggedIn,function (req, res, next) {
 	})
 });
 
+router.get('/detail/:tid',isLoggedIn,function (req, res, next) {
+	var tid = req.params.tid;
+	var result = [];
+	database.getOrderByTrackingId(tid,function(err,rows){
+		if (err) console.log(err);
+		result = digestResult(rows)[0];
+		res.send(JSON.stringify(result));
+	});
+});
+
+var digestResult = function(rows){
+	var result = [];
+	var oFilter = [];
+	var total_price=0.0;
+	for(var i=0; i<rows.length;i++){
+		var record = rows[i];
+		// if the order has not been processed
+		if (oFilter.indexOf(record['order_id']) == -1){
+			oFilter.push(record['order_id']);
+			// INFO:
+			// items difiniton differ from that in delivered.js/undelivered.js
+			// here:           product_id + qty
+			// delivered.js:   product_name + qty
+			var items = [];
+			total_price += record['total'];
+			items.push({'pid': record['product_id'],
+						'name': record['product_name'],
+						'qty': record['qty'],
+						'price': record['price'],
+						'total':record['total']});
+			result.push({'order_id':'/'+record['order_id'],
+						'tracking_id':record['tracking_id'],
+						'status':record['status'],
+						'customer':record['name'],
+						'customer_id':record['customer_id'],
+						'customer_contact':record['contact'],
+						'customer_address':record['address'],
+						'staff':record['realname'],
+						'staff_contact':record['s_contact'],
+						'staff_id':record['de_staff'],
+						'created':record['created'],
+						'items':items,
+						'total_price':total_price
+						});
+		}
+		// if orders with the same order_id have been processed
+		else{
+			// modify last record
+			result[result.length-1]['items'].push({'pid': record['product_id'],
+													'name': record['product_name'],
+													'qty': record['qty'],
+													'price': record['price'],
+													'total':record['total']});
+			result[result.length-1]['total_price'] += record['total'];
+		};
+
+	};
+	return result;
+}
+
+
 
 function isLoggedIn(req, res, next) {
 

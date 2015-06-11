@@ -46,16 +46,20 @@ block content
 			});
 
 			$('#btn-back').click(function(){
-				$(location).attr('href','/product');
-				
+				$(location).attr('href','/product');	
 			});
+
+			$('#btn-add').click(function(){
+				$(location).attr('href','/product/add');	
+			});
+
 
 
 		});
 
 	if message.length>0
 		div(class='container')
-			if (message == 'Delete success.')||(message == 'Restore success.')
+			if (message == 'Delete success.')||(message == 'Restore success.')||(message == 'New product has been added to database.')
 				div(class="alert alert-success")= message
 			else
 				div(class="alert alert-danger")= message

@@ -115,6 +115,7 @@ block content
 				var data = !{JSON.stringify(result)};
 				//var plist = !{JSON.stringify(plist)};
 				var data = data[0];
+				Materialize.toast('Edit Mode (Order:'+data.tracking_id+')', 5000);
 				$('#realname').val(data.customer);
 				$('#contact').val(data.customer_contact);
 				$('#address').val(data.customer_address);

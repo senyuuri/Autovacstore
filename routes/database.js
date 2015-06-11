@@ -492,7 +492,13 @@ exports.updateUserPassword = function(username,password,cb){
 };
 
 
-
+exports.addProduct = function(name,price,cb){
+	connection.query("INSERT INTO products (name, price) VALUES (?,?)",[name,price],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_INSERT: addProduct");
+		cb(null,rows);
+	});
+};
 
 
 
