@@ -2,21 +2,24 @@ doctype html
 html
 	head
 		title= title
+		link(rel='stylesheet' href='/static/materialize.min.css')
 		link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
 		link(rel='stylesheet' href='http://getbootstrap.com/examples/dashboard/dashboard.css')
 		//link(rel='stylesheet' href='/styles/sidebar.css')
 		script(src="https://code.jquery.com/jquery-2.1.4.min.js")
 		script(src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js")
+		script(src='/static/materialize.min.js')
 		meta(name="viewport",content="width=device-width, initial-scale=1")
+
 		script(type='text/javascript').
 
 			$(document).ready(function(err) {
 
-				$(document).on('click','.label-warning',function(){
-					$(this).attr('class','label label-primary');
-					$(this).text('Delivering');
+				$(document).on('click','.undelivered',function(){
+					$(this).closest('tbody').find('.dropdown-button').attr('class','dropdown-button btn yellow darken-3 btn-small btn-block');
+					$(this).text('Undelivered');
 					var index = $(this).attr('clickindex');
-					window.location.replace("/postman/s/"+index+'/'+'p');
+					window.location.replace("/postman/s/"+index+'/'+'r');
 				});
 
 				$(document).on('click','.label-primary',function(){
@@ -24,6 +27,49 @@ html
 					$(this).text('Success');
 					var index = $(this).attr('clickindex');
 					window.location.replace("/postman/s/"+index+'/'+'s');
+				});
+
+				$(document).on('click', '.invoice', function () {
+					var index = $(this).attr('clickindex');
+					window.open("/invoice/"+index);
+				});
+
+				$('tr').on('click', function(e){
+					var tid = $(this).attr('tid');
+
+					if(e.target.tagName != 'A' && e.target.tagName != 'span'){
+						setTimeout(function(){
+							$.get('/postman/detail/'+tid, function(data) {
+								var result = JSON.parse(data);
+								if($('#'+tid).find('h5:eq(0)').text()=='Loading order infomation'){
+									$('#'+tid).find('h5:eq(0)').text("Created On");
+									$('#'+tid).find('h5:eq(1)').text(new Date(result['created']));
+
+									var div1 = $("<div class='col-lg-2 col-md-2 col-lg-offset-1 col-md-offset-1 add-bottom'>");
+									div1.append("<h5 class='title-font'> Customer Name </h5>");
+									div1.append("<h5>"+ result['customer']+"</h5>");
+									$('#'+tid).append(div1);
+
+									var div2 = $("<div class='col-lg-2 col-md-2 add-bottom'>");
+									div2.append("<h5 class='title-font'> Contact No. </h5>");
+									div2.append("<h5>"+ result['customer_contact']+"</h5>");
+									$('#'+tid).append(div2);
+
+									var div3 = $("<div class='col-lg-7 col-md-7 add-bottom'>");
+									div3.append("<h5 class='title-font'> Address </h5>");
+									div3.append("<h5>"+ result['customer_address']+"</h5>");
+									$('#'+tid).append(div3);
+
+									var icon = $('#'+tid).find('div:eq(0)').empty();
+									icon.append("<i class='mdi-action-done green-text medium'>");
+								};
+								
+							});
+						}, 500);
+					}else{
+						// if a dropdown is clicked, do not show collaped order info
+						e.stopPropagation();
+					};
 				});
 			});
 
@@ -39,56 +85,121 @@ html
 					a(class='navbar-brand' href='/') Autovacstore
 				div(class='collapse navbar-collapse',id='navbar')
 					ul(class='nav navbar-nav navbar-right')
-						li
+						//li
 							a(href='/settings') Settings
 						li
 							a(href='/auth/logout') Logout
 					form(class='navbar-form navbar-right')
 						input(type="text",class="form-control",placeholder="Search...")
 
-	body
+		style.
+			.prompt-font{
+				color: #777;
+				font-family: Helvetica,Arial,sans-serif;
+				margin-left:-10px;
+			}
+
+			.title-font{
+				color: #777;
+				font-family: Helvetica,Arial,sans-serif;
+			}
+
+			.add-padding{
+				padding-bottom: 15px;
+				padding-top: 20px;
+			}
+
+			.add-top{
+				margin-top:30px;
+			}
+
+			.add-bottom{
+				margin-bottom:20px;
+			}
+
+			.btn-small{
+				padding-top:3px;
+				padding-bottom:0px;
+				padding-left:6px;
+				padding-right:6px;
+				font-family: Helvetica,Arial,sans-serif;
+			}
+
+			.icon-text{
+				position:relative;
+			}
+
 		if message.length>0
-			if (message == 'Status updated.')
-				div(class="alert alert-success")= message
-			else
-				div(class="alert alert-danger")= message
+			script(type='text/javascript').
+				Materialize.toast("#{message}", 4000);
+
+	div(class='container add-top')
+		ul(class="collapsible" data-collapsible="accordion")
+			div(class='container-fluid')
+				div(role='tabpanel',class='tab-pane fade active in',id='orders',aria-labelledby='orders-tab')
+					table(class='table table-hover')
+						thead
+							tr
+								th Status
+								th ID/Tracking Code
+								th Product(s)
+								th Total(SGD$)
+								th Customer
+								th Delivery
+								th Invoice
+						tbody
+							if result.length != 0
+								- for (var i=0; i<result.length; i++)
+									tr(data-toggle="collapse" data-target="#collapseme"+i tid=result[i]['tracking_id'])
+										
+										if (result[i]['status']=='s')
+											th
+
+												a(class='dropdown-button btn green btn-small btn-block' href='#' data-activates='dropdown'+i) Delivered ▼
+										if (result[i]['status']=='r')
+											th
+
+												a(class='dropdown-button btn yellow darken-3 btn-small btn-block' href='#' data-activates='dropdown'+i)  Undelivered ▼
+										if (result[i]['status']=='p')
+											th
+												a(class='dropdown-button btn blue darken-3 btn-small btn-block' href='#' data-activates='dropdown'+i)  Delivering ▼
+										
+										ul(id='dropdown'+i class='dropdown-content')
+											li(class='yellow darken-3')
+												a(href="/postman/s/"+result[i]['order_id']+"/r" class='white-text' clickindex=result[i]['order_id']) Undelivered 
+											li(class='blue darken-3')
+												a(href="/postman/s/"+result[i]['order_id']+"/p" class='white-text delivering' clickindex=result[i]['order_id']) Delivering
+											li(class='green')
+												a(href="/postman/s/"+result[i]['order_id']+"/s" class='white-text delivered' clickindex=result[i]['order_id']) Delivered
+											li(class="divider")
 
 
-		div(class='tab-content' id='myTabContent')
-		div(class='container-fluid')
-			div(role='tabpanel',class='tab-pane fade active in',id='orders',aria-labelledby='orders-tab')
-				table(class='table table-striped')
-					thead
-						tr
-							th Status
-							th ID/Tracking Code
-							th Product(s)
-							th Total(SGD$)
-							th Customer
-							th Delivery
-							th Operations
-					tbody
-						if result.length != 0
-							- for (var i=0; i<result.length; i++)
-								tr
-									if (result[i]['status']=='s')
-										th
-											span(class="label label-success",clickindex=result[i]['order_id']) Delivered
-									if (result[i]['status']=='r')
-										th
-											span(class="label label-warning",clickindex=result[i]['order_id']) Undelivered
-									if (result[i]['status']=='p')
-										th
-											span(class="label label-primary",clickindex=result[i]['order_id']) Delivering
-									th(scope='row')= result[i]['order_id'] + '/' + result[i]['tracking_id']
-									td= result[i]['items']
-									td= '$ ' + result[i]['total']
-									td= result[i]['customer']
-									td= result[i]['staff']
-									td
-										//button(type="button",class="btn btn-default",aria-label="Left Align")
-										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=result[i]['order_id'])
-										span(class="glyphicon glyphicon-indent-left invoice",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['order_id'])
-										span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['order_id'])
-						else
-							th(scope='row') NO DELIVERED ORDER
+										th(scope='row')= result[i]['order_id'] + '/' + result[i]['tracking_id']
+										td= result[i]['items']
+										td= '$ ' + result[i]['total']
+										td= result[i]['customer']
+										td= result[i]['staff']
+										td
+											//button(type="button",class="btn btn-default",aria-label="Left Align")
+											span(class="glyphicon glyphicon-indent-left invoice",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['tracking_id'])
+									tr(id="collapseme"+i class="collapse out")
+											td(colspan=7)
+												div(class='container-fluid add-padding' id=result[i]['tracking_id'])
+													div(class='col-lg-1 col-md-1')
+														div(class="preloader-wrapper small active")
+															div(class="spinner-layer spinner-yellow-only")
+																div(class="circle-clipper left")
+																	div(class="circle")
+																div(class="gap-patch")
+																	div(class="circle")
+																div(class="circle-clipper right")
+																	div(class="circle")
+													div(class='col-lg-11 col-md-11 add-bottom')
+														h5(class='title-font') Loading order infomation
+														h5 
+							else
+								th(scope='row') NO DELIVERED ORDER
+															
+							
+
+							

@@ -38,7 +38,7 @@ block content
 							$('#'+tid).find('h5:eq(0)').text("Created On");
 							$('#'+tid).find('h5:eq(1)').text(new Date(result['created']));
 
-							var div1 = $("<div class='col-lg-2 col-md-2 add-bottom'>");
+							var div1 = $("<div class='col-lg-2 col-md-2 col-lg-offset-1 col-md-offset-1 add-bottom'>");
 							div1.append("<h5 class='title-font'> Customer Name </h5>");
 							div1.append("<h5>"+ result['customer']+"</h5>");
 							$('#'+tid).append(div1);
@@ -54,10 +54,9 @@ block content
 							$('#'+tid).append(div3);
 
 							var icon = $('#'+tid).find('div:eq(0)').empty();;
-							icon.append("<i class='mdi-action-done green-text large'>");
+							icon.append("<i class='mdi-action-done green-text medium'>");
 
-							//$('#'+tid).append("<h5>CustomerName</h5><small>"+result['customer'] +"</small>");
-							//$('#'+tid).html("<div class='container-fluid add-padding'>");
+							
 						}
 						
 					});
@@ -90,19 +89,6 @@ block content
 			else
 				div(class="form-group")
 					div(class="alert alert-danger")= message
-	//
-		div(container-fluid)
-		ul(class="collapsible" data-collapsible="accordion")
-			li
-				div(class="collapsible-header")
-					i(class="mdi-image-filter-drama") First
-				div(class="collapsible-body")
-					p Lorem ipsum dolor sit amet.
-			li
-				div(class="collapsible-header")
-					i(class="mdi-image-filter-drama") Second
-				div(class="collapsible-body")
-					p Lorem ipsum dolor sit amet.
 
 	ul(class="collapsible" data-collapsible="accordion")
 		div(class='container-fluid')
@@ -129,7 +115,7 @@ block content
 										th
 											span(class="label label-info") Delivering	
 									td= result[i]['items']
-									td= '$ ' + result[i]['total']
+									td= '$ ' + result[i]['total'].toFixed(2)
 									td= result[i]['customer']
 									td= result[i]['staff']
 									td
@@ -153,37 +139,6 @@ block content
 											div(class='col-lg-11 col-md-11 add-bottom')
 												h5(class='title-font') Loading order infomation
 												h5 
-												
-											//					
-												div(class='col-lg-11 col-md-11 add-bottom')
-													h5(class='title-font') Created On
-													h5 2015-11-11134 412342134231412412341
-												div
-													div(class='col-lg-1 col-md-1 add-bottom')
-													
-													div(class='col-lg-2 col-md-2 col-lg-offset-1 col-md-offset-1 add-bottom')
-														h5(class='title-font') Customer
-														h5 CustomerName
-													div(class='col-lg-2 col-md-2 add-bottom')
-														h5(class='title-font') Contact
-														h5 11111
-													div(class='col-lg-7 col-md-7 add-bottom')
-														h5(class='title-font') Address
-														h5 Dunman High School Hostel, 61 Kampong Arang Road, Singapore 438181
-											//div
-												div(class='col-lg-1 col-md-1')
-													
-												div(class='col-lg-2 col-md-2')
-													h5(class='title-font') Staff
-													h5 AAB
-												div(class='col-lg-2 col-md-2')
-													h5(class='title-font') Staff Contact
-													h5 111111
-												
-													div(class='col-lg-11 col-md-11')
-													h5(class='prompt-font') Loading order infomation
-
-
 												
 						else
 							th(scope='row') NO UNDELIVERED ORDER

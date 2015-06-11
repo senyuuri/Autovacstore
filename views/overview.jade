@@ -90,10 +90,10 @@ block content
 				h2(class='text-right digit') $-
 				p(class='text-right text-sub') $-, -%
 
-	div(class='container col-lg-5 col-md-5')
+	//div(class='container col-lg-5 col-md-5')
 		div(class="page-header stat-title")
 			h4(class='stat-title') Recent Orders
-		//
+
 			ul(class="nav nav-pills")
 				li(role="presentation" class="active")
 					a(href="#" ) All
@@ -102,17 +102,40 @@ block content
 				li(role="presentation")
 					a(href="#" ) Undelivered
 
-		table(class='table table-hover')
+			table(class='table table-hover')
 				tbody
 					tr
 						th Developing Feature
-						//
+						
 							td 1
 							td 2222
 							td test
 
-	div(class='container col-lg-7 col-md-7')
+	div(class='container col-lg-8 col-md-8')
 		div(class="page-header stat-title")
 			h4(class='stat-title') Statistics
 				small  /orders in recent 10 days
 		canvas(id="statistics" width="550" height="250")
+
+	div(class='container col-lg-4 col-md-4')
+		div(class="page-header stat-title")
+			h4(class='stat-title') Trend
+				small  /best sells in recent 30 days
+
+		table(class='table table-striped')
+			thead
+				td #
+				td Mode
+				td Orders
+			tbody
+				- for(var i=0;i<sales_product.length;i++)
+					tr
+						td= i+1
+						td= sales_product[i]['product']
+						if i <=2
+							th= sales_product[i]['total']
+						else
+							td= sales_product[i]['total']
+
+
+

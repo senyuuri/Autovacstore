@@ -1,10 +1,5 @@
-
-drop table staffs;
-drop table orders;
-drop table operation;
-drop table operation2;
-drop table log;
-
+ALTER TABLE orders ADD COLUMN last_update timestamp ON UPDATE CURRENT_TIMESTAMP
+last_update timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 Initialisation (MySQL)
 ===================================================
@@ -26,7 +21,7 @@ CREATE TABLE IF NOT EXISTS products
 (
 product_id int NOT NULL AUTO_INCREMENT,
 name varchar(50) NOT NULL,
-price int NOT NULL,
+price float NOT NULL,
 available int,
 PRIMARY KEY (product_id)
 );
@@ -61,7 +56,7 @@ CREATE TABLE IF NOT EXISTS items
 order_id int NOT NULL,
 product_id int NOT NULL,
 qty int NOT NULL,
-total int NOT NULL,
+total float NOT NULL,
 PRIMARY KEY (order_id, product_id),
 FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (product_id) REFERENCES products(product_id)

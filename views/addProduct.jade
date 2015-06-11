@@ -10,6 +10,12 @@ block content
 			margin-left: 8px;
 		}
 
+	script.
+		$(document).ready(function(err) {
+			$('.btn-cancel').click(function(){
+				location.href = "/product";
+			});
+		});
 
 	div(class='container-fluid')
 		form(class='form-group',method='POST',action='/product/add')
@@ -36,4 +42,4 @@ block content
 
 
 			button(type='submit',class='btn btn-default',value='Submit') Submit
-			button(type='button',class='btn btn-default add-left') Cancel
+			button(type='button',class='btn btn-default add-left btn-cancel') Cancel

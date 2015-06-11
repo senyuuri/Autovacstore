@@ -40,9 +40,12 @@ router.get('/',isLoggedIn,function (req, res, next) {
 			});		
 		},
 		four: function(callback){
-			// Get recent activities
+			// Get sales by product
 			// TODO
-			callback(null);
+			database.getSales(function(err,rows){
+				if (err) console.log(err);
+				callback(null,rows);
+			});	
 		},
 
 	},
@@ -52,8 +55,9 @@ router.get('/',isLoggedIn,function (req, res, next) {
 		var order_count = parseOrderCount(results['one']);
 		var sales_today = calcSalesTotal(results['two']);
 		var sales_yesterday = calcSalesTotal(results['three']);
+		var sales_product = results['four'];
 		// process two/sales today
-		res.render('overview', { title: 'Autovacstore', page:'overview', date_list: date_list, order_count: order_count, sales_today:sales_today, sales_yesterday:sales_yesterday});
+		res.render('overview', { title: 'Autovacstore', page:'overview', date_list: date_list, order_count: order_count, sales_today:sales_today, sales_yesterday:sales_yesterday, sales_product:sales_product});
 	});
   	
 });

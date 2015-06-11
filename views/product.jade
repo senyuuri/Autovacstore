@@ -88,17 +88,17 @@ block content
 								tr
 									th= plist[i]['product_id']
 									td= plist[i]['name']
-									td= plist[i]['price']
+									td= plist[i]['price'].toFixed(2)
 									td(class='color-yes') Yes
 									td 
-										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=plist[i]['product_id'])
+										//span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=plist[i]['product_id'])
 										span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=plist[i]['product_id'])
 						else
 							if plist[i]['is_deleted'] == 'y'
 								tr
 									th= plist[i]['product_id']
 									td= plist[i]['name']
-									td= plist[i]['price']
+									td= plist[i]['price'].toFixed(2)
 									td(class='color-del') No (deleted)
 									if view_del != true
 										td 

@@ -10,6 +10,14 @@ block content
 			margin-left: 8px;
 		}
 
+	script.
+		$(document).ready(function(err) {
+			$('.btn-cancel').click(function(){
+				location.href = "/staff";
+			});
+		});
+
+
 
 	div(class='container-fluid')
 		form(class='form-group',method='POST',action='/staff/add')
@@ -26,34 +34,34 @@ block content
 								div(class='form-group')
 									div(class='col-lg-3')
 										label(for='realname',class='control-label') Username
-										input(type='text',class='form-control',name='username',placeholder='',id='realname')
+										input(type='text',class='form-control',name='username',placeholder='',id='realname',required='')
 										span
 							div(class='row')
 								div(class='form-group add-top')
 									div(class='col-lg-3')
 										label(for='realname',class='control-label') Password
-										input(type='password',class='form-control',name='password',placeholder='',id='realname')
+										input(type='password',class='form-control',name='password',placeholder='',id='realname',required='')
 										span
 
 							div(class='row')
 								div(class='form-group add-top')
 									div(class='col-lg-3')
 										label(for='realname',class='control-label') Confirm Password
-										input(type='password',class='form-control',name='con_password',placeholder='',id='realname')
+										input(type='password',class='form-control',name='con_password',placeholder='',id='realname',required='')
 										span
 
 							div(class='row')
 								div(class='form-group add-top')
 									div(class='col-lg-3')
 										label(for='realname',class='control-label') Name
-										input(type='text',class='form-control',name='name',placeholder='',id='realname')
+										input(type='text',class='form-control',name='name',placeholder='',id='realname',required='')
 										span
 							div(class='row')
 								div(class='form-group add-top')		
 									div(class='col-lg-3')
 										label(class='control-label',for='contact') Contact Number
-										input(type='text',class='form-control',name='contact',placeholder='',id='contact')
+										input(type='text',class='form-control',name='contact',placeholder='',id='contact',required='')
 										span
 
 			button(type='submit',class='btn btn-default',value='Submit') Submit
-			button(type='button',class='btn btn-default add-left') Cancel
+			button(type='button',class='btn btn-default add-left btn-cancel') Cancel

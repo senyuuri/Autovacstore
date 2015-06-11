@@ -395,11 +395,13 @@ exports.getOrderCount = function(cb){
 
 
 //get total sales, group by product name
-exports.getSales = function(oid,cb){
-	connection.query('SELECT products.name AS product, SUM(items.total) AS total'+
+exports.getSales = function(cb){
+	connection.query('SELECT products.name AS product, SUM(items.total) AS total '+
 					'FROM items '+
 					'INNER JOIN products ON items.product_id = products.product_id '+
-					'GROUP BY products.name; ', function(err, rows){
+					'GROUP BY products.name '+
+					'ORDER BY total DESC '+
+					'LIMIT 6', function(err, rows){
 	  	if (err) return cb(err);
 	  	cb(null,rows);
 	});
@@ -500,5 +502,13 @@ exports.addProduct = function(name,price,cb){
 	});
 };
 
-
+/* Not compatible with MySQL 5.5
+exports.getRecentActivities = function(name,price,cb){
+	connection.query("",[name,price],function(err, rows){
+		if (err) return cb(err);
+		console.log("DB_GET: getRecentActivities");
+		cb(null,rows);
+	});
+};
+*/
 

@@ -15,7 +15,18 @@ html
 		script(src='/static/bootstrap.min.js')
 			
 		style(type="text/css").
-			.modal-footer {   border-top: 0px; }
+			.modal-footer {   
+				border-top: 0px; 
+			}
+			.radio-push{
+				margin-right:10px;
+			}
+
+			.radio-font{
+				color: #777;
+				font-family: Helvetica,Arial,sans-serif;
+			}
+
 		meta(name="viewport",content="width=device-width, initial-scale=1")
 
 	body
@@ -39,7 +50,18 @@ html
 									input(type="text",class="form-control input-lg",placeholder="Username",name='username',required='')
 								div(class="form-group")
 									input(type="password",class="form-control input-lg",placeholder="Password",name='password',required='')
-								div(class="form-group")
+								div(class="form-group pull-right")
+									label(class="radio-inline")
+										p(class='radio-font') Select Account Type:
+									label(class="radio-inline")
+										input(type="radio" name="role" id="inlineRadio1" value="admin" required='') 
+										p(class='radio-font') Administrator
+									label(class="radio-inline")
+										input(type="radio" name="role" id="inlineRadio2" value="staff" required='') 
+										p(class='radio-push radio-font') Staff
+
+								//
+									div(class="form-group")
 									a(href='/postman')= ">> Staff Login"
 									
 						div(class="modal-footer")

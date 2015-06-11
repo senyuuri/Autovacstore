@@ -1,24 +1,84 @@
 extends layout
 
 block content
+	style.
+		.prompt-font{
+			color: #777;
+			font-family: Helvetica,Arial,sans-serif;
+			margin-left:-10px;
+		}
+
+		.title-font{
+			color: #777;
+			font-family: Helvetica,Arial,sans-serif;
+		}
+
+		.add-padding{
+			padding-bottom: 15px;
+			padding-top: 20px;
+		}
+
+		.add-top{
+			margin-top:30px;
+		}
+
+		.add-bottom{
+			margin-bottom:20px;
+		}
+
 
 	script(type='text/javascript').
 		$(document).ready(function(err) {
+			$('tr').on('click', function(e){
+				var tid = $(this).attr('tid');
+				setTimeout(function(){
+					$.get('/undelivered/detail/'+tid, function(data) {
+						
+						var result = JSON.parse(data);
+						if($('#'+tid).find('h5:eq(0)').text()=='Loading order infomation'){
+							$('#'+tid).find('h5:eq(0)').text("Created On");
+							$('#'+tid).find('h5:eq(1)').text(new Date(result['created']));
 
-			 $(document).on('click', '.delete', function () {
-			 	var index = $(this).attr('clickindex');
-			 	window.location.replace("/delivered/delete/"+index);
-			 });
+							var div1 = $("<div class='col-lg-2 col-md-2 col-lg-offset-1 col-md-offset-1 add-bottom'>");
+							div1.append("<h5 class='title-font'> Customer Name </h5>");
+							div1.append("<h5>"+ result['customer']+"</h5>");
+							$('#'+tid).append(div1);
 
-			 $(document).on('click', '.edit', function () {
-			 	var index = $(this).attr('clickindex');
-			 	window.location.replace("/addorder/edit/"+index);
-			 });
+							var div2 = $("<div class='col-lg-2 col-md-2 add-bottom'>");
+							div2.append("<h5 class='title-font'> Contact No. </h5>");
+							div2.append("<h5>"+ result['customer_contact']+"</h5>");
+							$('#'+tid).append(div2);
 
-			 $(document).on('click', '.invoice', function () {
-			 	var index = $(this).attr('clickindex');
-			 	window.open("/invoice/"+index);
-			 });
+							var div3 = $("<div class='col-lg-7 col-md-7 add-bottom'>");
+							div3.append("<h5 class='title-font'> Address </h5>");
+							div3.append("<h5>"+ result['customer_address']+"</h5>");
+							$('#'+tid).append(div3);
+
+							var icon = $('#'+tid).find('div:eq(0)').empty();;
+							icon.append("<i class='mdi-action-done green-text medium'>");
+
+							//$('#'+tid).append("<h5>CustomerName</h5><small>"+result['customer'] +"</small>");
+							//$('#'+tid).html("<div class='container-fluid add-padding'>");
+						}
+						
+					});
+				}, 500);
+			});
+
+			$(document).on('click', '.delete', function () {
+				var index = $(this).attr('clickindex');
+				window.location.replace("/delivered/delete/"+index);
+			});
+
+			$(document).on('click', '.edit', function () {
+				var index = $(this).attr('clickindex');
+				window.location.replace("/addorder/edit/"+index);
+			});
+
+			$(document).on('click', '.invoice', function () {
+				var index = $(this).attr('clickindex');
+				window.open("/invoice/"+index);
+			});
 
 		});
 
@@ -31,10 +91,10 @@ block content
 				div(class="form-group")
 					div(class="alert alert-danger")= message
 					
-	div(class='tab-content' id='myTabContent')
+	ul(class="collapsible" data-collapsible="accordion")
 		div(class='container-fluid')
 			div(role='tabpanel',class='tab-pane fade active in',id='orders',aria-labelledby='orders-tab')
-				table(class='table table-striped')
+				table(class='table table-hover')
 					thead
 						tr
 							th ID/Tracking Code
@@ -47,7 +107,7 @@ block content
 					tbody
 						if result.length != 0
 							- for (var i=0; i<result.length; i++)
-								tr
+								tr(data-toggle="collapse" data-target="#collapseme"+i tid=result[i]['tracking_id'])
 									th(scope='row')= result[i]['order_id'] + '/' + result[i]['tracking_id']
 									if (result[i]['status']=='s')
 										th
@@ -60,7 +120,7 @@ block content
 											span(class="label label-primary") Delivering
 
 									td= result[i]['items']
-									td= '$ ' + result[i]['total']
+									td= '$ ' + result[i]['total'].toFixed(2)
 									td= result[i]['customer']
 									td= result[i]['staff']
 									td
@@ -68,6 +128,23 @@ block content
 										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=result[i]['order_id'])
 										span(class="glyphicon glyphicon-indent-left invoice",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['tracking_id'])
 										span(class="glyphicon glyphicon-remove delete",style='margin-left: 10px;',aria-hidden="true",clickindex=result[i]['order_id'])
+						
+								tr(id="collapseme"+i class="collapse out")
+									td(colspan=7)
+										div(class='container-fluid add-padding' id=result[i]['tracking_id'])
+											div(class='col-lg-1 col-md-1')
+												div(class="preloader-wrapper small active")
+													div(class="spinner-layer spinner-yellow-only")
+														div(class="circle-clipper left")
+															div(class="circle")
+														div(class="gap-patch")
+															div(class="circle")
+														div(class="circle-clipper right")
+															div(class="circle")
+											div(class='col-lg-11 col-md-11 add-bottom')
+												h5(class='title-font') Loading order infomation
+												h5 
+
 						else
 							th(scope='row') NO DELIVERED ORDER
 

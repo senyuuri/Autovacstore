@@ -23,7 +23,12 @@ router.post('/',urlencodedParser,function(req, res, next) {passport.authenticate
 	    req.logIn(user, function(err) {
 		    if (err) { return next(err); }
 		    // redirect to referer page
-		   	res.redirect(req.session.returnTo || '/');
+		    var role = req.body.role;
+		    if(role == 'admin'){
+		   		res.redirect(req.session.returnTo || '/');
+		   	}else if(role== 'staff'){
+		   		res.redirect('/postman');
+		   	}
 		});
   	})(req, res, next)
 });
