@@ -15,7 +15,8 @@ router.get('/',isLoggedIn,function (req, res, next) {
 	// record orders that have been processed
 	var oFilter = [];
 	// Get product list
-	database.getUndelivered(function(err,rows){
+  var uid = req.user.uid;
+	database.getUndeliveredByStaff(uid,function(err,rows){
 		if (err) console.log(err);
   		console.log("============= delivered.js =============");
   		//console.log(rows);

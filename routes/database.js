@@ -144,6 +144,24 @@ exports.getDelivered = function(cb){
 	});
 };
 
+exports.getUndeliveredByStaff = function(uid,cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE (orders.status='r' OR orders.status='p') AND orders.is_deleted IS NULL AND orders.de_staff=? " +
+					'ORDER BY orders.order_id;'
+					,uid,function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getUndeliveredByStaff");
+			cb(null,rows);
+	});
+};
+
+
 // For edition of existing orders (addOrder.js)
 exports.getOrderById = function(oid,cb){
 	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
