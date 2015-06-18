@@ -139,7 +139,62 @@ block content
 											div(class='col-lg-11 col-md-11 add-bottom')
 												h5(class='title-font') Loading order infomation
 												h5 
-												
+							// Determine first page number on the pagination bar
 						else
 							th(scope='row') NO UNDELIVERED ORDER
+	
+	div(class='container-fluid')
+		
+		div(class='pull-right')
+			
+			ul(class="pagination")
+				li
+					p(class='prompt-font')= total+ " records"
+				if curr_page != 1
+					li
+						a(href="/undelivered?curr_page="+(parseInt(curr_page)-1) aria-label="Previous")
+							span(aria-hidden="true") &laquo;
+				else
+					li(class="disabled")
+						a(href="#" aria-label="Previous")
+							span(aria-hidden="true") &laquo;
+
+				if (curr_page-2) < 1
+					- for(var j=1;j<=5;j++)
+						if (j > 0 && j <=(Math.floor(total/15)+1))
+							if (j == curr_page)
+								li(class='active')
+									a(href="/undelivered?curr_page="+j)= j
+							else
+								li
+									a(href="/undelivered?curr_page="+j)= j
+
+
+				else if ( (parseInt(curr_page)+2)> (Math.floor(total/15)+1) )
+					- for(var j=-2;j<=2;j++)
+						if (((Math.floor(total/15)-1)+j) > 0 && ((Math.floor(total/15)-1)+j) <= (Math.floor(total/15)+1))
+							if ((Math.floor(total/15)-1)+j == curr_page)
+								li(class='active')
+									a(href="/undelivered?curr_page="+((Math.floor(total/15)-1)+j))= ((Math.floor(total/15)-1)+j)
+							else
+								li
+									a(href="/undelivered?curr_page="+((Math.floor(total/15)-1)+j))= ((Math.floor(total/15)-1)+j)
+				else
+					- for(var j=-2;j<=2;j++)
+						if (parseInt(curr_page)+j == curr_page)
+							li(class='active')
+								a(href="/undelivered?curr_page="+(parseInt(curr_page)+j))= (parseInt(curr_page)+j)
+						else
+							li
+								a(href="/undelivered?curr_page="+(parseInt(curr_page)+j))= (parseInt(curr_page)+j)
+
+				if (curr_page != (Math.floor(total/15)+1))
+					li
+						a(href="/undelivered?curr_page="+(parseInt(curr_page)+1) aria-label="Next")
+							span(aria-hidden="true") &laquo;
+				else
+					li(class="disabled")
+						a(href="#" aria-label="Next")
+							span(aria-hidden="true") &laquo;
+						
 

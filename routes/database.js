@@ -109,40 +109,8 @@ exports.getProductPrice = function(product_id,cb){
 	});
 }
 
-// For undelivered.js                                                      
-exports.getUndelivered = function(cb){
-	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
-					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
-					'FROM orders '+
-					'INNER JOIN items ON orders.order_id=items.order_id '+
-					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
-					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
-					'INNER JOIN products ON items.product_id = products.product_id '+
-					"WHERE orders.is_deleted IS NULL AND (orders.status='r' OR orders.status='p') " +
-					'ORDER BY orders.order_id;'
-					,function(err, rows){
-			if (err) return cb(err);
-			console.log("DB_GET: getUndelivered");
-			cb(null,rows);
-	});
-};
 
-exports.getDelivered = function(cb){
-	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
-					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
-					'FROM orders '+
-					'INNER JOIN items ON orders.order_id=items.order_id '+
-					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
-					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
-					'INNER JOIN products ON items.product_id = products.product_id '+
-					"WHERE orders.status='s' AND orders.is_deleted IS NULL " +
-					'ORDER BY orders.order_id;'
-					,function(err, rows){
-			if (err) return cb(err);
-			console.log("DB_GET: getDelivered");
-			cb(null,rows);
-	});
-};
+
 
 exports.getUndeliveredByStaff = function(uid,cb){
 	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
@@ -530,3 +498,93 @@ exports.getRecentActivities = function(name,price,cb){
 };
 */
 
+exports.getPageRange = function(page,cb){	
+	connection.query("SELECT count(items.product_id) AS count, orders.order_id " +
+					"FROM orders " +
+					"INNER JOIN items ON orders.order_id=items.order_id " +
+					"WHERE orders.is_deleted IS NULL AND (orders.status='r' OR orders.status='p') " +
+					"GROUP BY orders.order_id " +
+					"ORDER BY orders.order_id " +
+					"LIMIT 15 OFFSET ?" 
+					,[(page-1)*15],function(err, rows){
+		if (err) return cb(err);
+		cb(null,rows);
+	});
+};
+
+exports.getPageRange2 = function(page,cb){	
+	connection.query("SELECT count(items.product_id) AS count, orders.order_id " +
+					"FROM orders " +
+					"INNER JOIN items ON orders.order_id=items.order_id " +
+					"WHERE orders.is_deleted IS NULL AND (orders.status='s') " +
+					"GROUP BY orders.order_id " +
+					"ORDER BY orders.order_id " +
+					"LIMIT 15 OFFSET ?" 
+					,[(page-1)*15],function(err, rows){
+		if (err) return cb(err);
+		cb(null,rows);
+	});
+};
+
+// For undelivered.js                                                      
+exports.getUndelivered = function(page,limit,cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.is_deleted IS NULL AND (orders.status='r' OR orders.status='p') " +
+					'ORDER BY orders.order_id ' +
+					'LIMIT ? OFFSET ?'
+					,[limit,(page-1)*15],function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getUndelivered");
+			cb(null,rows);
+	});
+};
+
+exports.getDelivered = function(page,limit,cb){
+	connection.query('SELECT orders.order_id, orders.tracking_id, orders.status, orders.customer_id, '+
+					'orders.de_staff, staff.realname, items.product_id, items.qty, items.total, customers.name, products.name AS product_name '+
+					'FROM orders '+
+					'INNER JOIN items ON orders.order_id=items.order_id '+
+					'INNER JOIN customers ON orders.customer_id=customers.customer_id '+
+					'INNER JOIN staff ON orders.de_staff=staff.staff_id '+
+					'INNER JOIN products ON items.product_id = products.product_id '+
+					"WHERE orders.status='s' AND orders.is_deleted IS NULL " +
+					'ORDER BY orders.order_id ' +
+					'LIMIT ? OFFSET ?'
+					,[limit,(page-1)*15],function(err, rows){
+			if (err) return cb(err);
+			console.log("DB_GET: getDelivered");
+			cb(null,rows);
+	});
+};
+
+exports.getTotalPage = function(cb){	
+	connection.query("SELECT COUNT(result.order_id) AS total FROM ( " +
+					"SELECT count(items.product_id), orders.order_id " +
+					"FROM orders " + 
+					"INNER JOIN items ON orders.order_id=items.order_id " + 
+					"WHERE orders.is_deleted IS NULL AND (orders.status='r' OR orders.status='p') " +
+					"GROUP BY orders.order_id) result"
+				,function(err, rows){
+		if (err) return cb(err);
+		cb(null,rows[0]['total']);
+	});
+};
+
+exports.getTotalPage2 = function(cb){	
+	connection.query("SELECT COUNT(result.order_id) AS total FROM ( " +
+					"SELECT count(items.product_id), orders.order_id " +
+					"FROM orders " + 
+					"INNER JOIN items ON orders.order_id=items.order_id " + 
+					"WHERE orders.is_deleted IS NULL AND (orders.status='s') " +
+					"GROUP BY orders.order_id) result"
+				,function(err, rows){
+		if (err) return cb(err);
+		cb(null,rows[0]['total']);
+	});
+};

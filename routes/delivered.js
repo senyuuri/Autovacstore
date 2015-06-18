@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var async   = require('async');
 var database = require('../routes/database');
 var router = express.Router();
 var app = express();
@@ -15,13 +16,51 @@ router.get('/',isLoggedIn,function (req, res, next) {
 	// record orders that have been processed
 	var oFilter = [];
 	// Get product list
-	database.getDelivered(function(err,rows){
+	// Refer to one
+	var limit = 0;
+
+	var curr_page = 1;
+	if (req.query.curr_page != null){
+		curr_page = req.query.curr_page;
+	};
+
+	async.series({
+		one: function(callback){
+			database.getPageRange2(curr_page, function(err,rows){
+				if (err) console.log(err);
+				//Get a list of orders on the given page
+				//Calculate offset for the retrival of all relevent records in Stage 2
+				var pageList = rows;
+				for(var i=0;i<pageList.length;i++){
+					limit += pageList[i]['count'];
+				};
+				console.log('curr_page',curr_page,'   limit',limit);
+				callback(null,rows);
+			});
+		},
+		two: function(callback){
+			database.getDelivered(curr_page,limit,function(err,rows){
+				if (err) console.log(err);
+				callback(null,rows);
+			});
+		},
+		three: function(callback){
+			database.getTotalPage2(function(err,rows){
+				if (err) console.log(err);
+				callback(null,rows);
+			});
+		}
+	},
+	// when one & two & three finish
+	// results is now equal to: {one: ..., two: ..., three:...}
+	function(err, results) {
 		if (err) console.log(err);
-		console.log("============= delivered.js =============");
-		//console.log(rows);
+		var orders = results['two'];
+		var total = results['three'];
+
 		// conbine products and calculate total payables
-		for(var i=0; i<rows.length;i++){
-			var record = rows[i];
+		for(var i=0; i<orders.length;i++){
+			var record = orders[i];
 			// if the order has not been processed
 			if (oFilter.indexOf(record['order_id']) == -1){
 				oFilter.push(record['order_id']);
@@ -46,8 +85,9 @@ router.get('/',isLoggedIn,function (req, res, next) {
 		};
 		//console.log('=======================');
 		//console.log(result);
-		res.render('delivered', { title: 'Autovacstore',page:'delivered',result: result, message:req.flash('editMessage')});
-		});		
+		res.render('delivered', { title: 'Autovacstore',page:'delivered',result: result, message:req.flash('editMessage'),curr_page:curr_page,total:total});
+	});	
+
 });
 
 
