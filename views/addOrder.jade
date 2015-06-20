@@ -297,8 +297,9 @@ block content
 						div(class='container add-bottom' id='selstaff')
 							if staff
 								- for (var i=0; i<staff.length; i++)
-									button(type="button",class="btn btn-success btn-staff",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
-									span
+									if (staff[i].staff_id != 0)
+										button(type="button",class="btn btn-success btn-staff",sid=staff[i].staff_id,id='staff'+staff[i].staff_id)= staff[i].realname
+										span
 								input(type='hidden',name='staff',value="0",id='staff_value')
 							else
 								p ERR: NO DELIVERY MAN IN RECORD

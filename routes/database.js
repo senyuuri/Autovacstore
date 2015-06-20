@@ -446,7 +446,7 @@ exports.getStaffList = function(cb){
 
 // FOR staff.js, get recent 5 orders by staff_id
 exports.getOrderByStaffId = function(sid,cb){
-	connection.query("SELECT * FROM orders WHERE de_staff=? AND is_deleted IS NULL ORDER BY created DESC",sid,function(err, rows){
+	connection.query("SELECT * FROM orders WHERE de_staff=? AND is_deleted IS NULL AND (status='r' OR status='p') ORDER BY created DESC",sid,function(err, rows){
 		if (err) return cb(err);
 		console.log("DB_SELECT: getOrderByStaffId",sid);
 		cb(null,rows);
@@ -586,5 +586,43 @@ exports.getTotalPage2 = function(cb){
 				,function(err, rows){
 		if (err) return cb(err);
 		cb(null,rows[0]['total']);
+	});
+};
+
+exports.deleteStaffById = function(sid,cb){	
+	async.series({
+		one: function(callback){
+			// DISABLE FOREIGN KEY CHECK
+			connection.query("SET FOREIGN_KEY_CHECKS=0",function(err, rows){
+				if (err) return cb(err);
+				callback(null);
+			});
+		},
+		two: function(callback){
+			// Delete record in staff table
+			connection.query("DELETE FROM staff WHERE staff_id=?",sid,function(err, rows){
+				if (err) return cb(err);
+				callback(null);
+			});
+		},
+		three: function(callback){
+			// Update orders in the order table
+			connection.query("UPDATE orders SET de_staff=0 WHERE de_staff=?",sid,function(err, rows){
+				if (err) return cb(err);
+				callback(null);
+			});
+		},
+		four: function(callback){
+			// ENABLE FOREIGN KEY CHECK
+			connection.query("SET FOREIGN_KEY_CHECKS=1",function(err, rows){
+				if (err) return cb(err);
+				callback(null);
+			});
+		}
+	},
+	// when one & two & three finish
+	// results is now equal to: {one: ..., two: ..., three:...}
+	function(err, results) {
+		cb(null,results);
 	});
 };

@@ -12,6 +12,7 @@ password varchar(50) NOT NULL,
 previlege char(1) NOT NULL,
 realname varchar(30) NOT NULL,
 contact varchar(10) NOT NULL,
+is_deleted char(1),
 reg_date timestamp DEFAULT CURRENT_TIMESTAMP,
 de_count int NOT NULL DEFAULT 0,
 PRIMARY KEY (staff_id)
@@ -87,9 +88,12 @@ FOREIGN KEY (order_id) REFERENCES orders(order_id),
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 
+INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('STAFF DELETED','0','d','STAFF DELETED','0');
+INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('admin','123456','a','Admin','11111111');
+
 TEST VALUES
 =========================================
-
+INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('STAFF DELETED','0','d','STAFF DELETED','0');
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('aaa','111','d','ABB','94609879');
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('bbb','111','d','BCC','94609879');
 INSERT INTO staff (username, password, previlege, realname, contact) VALUES ('ccc','111','d','CDD','94609879');

@@ -1,0 +1,33 @@
+extends layout
+
+block content
+		div(class='container-fluid')
+			if message.length> 0
+				if (message == "Wrong Password.") || (message == "Password entered are not identical.")
+					div(class="form-group")
+						div(class="alert alert-danger")= message
+				else
+					div(class="form-group")
+						div(class="alert alert-success")= message
+			form(class='form-group',method='POST',action='/staff/pw')
+				div(class='panel panel-default')
+					div(class='panel-heading')
+						h2(class='panel-title') Change Account Password
+					div(class='panel-body')
+						div(class='row')
+							div(class='form-group col-lg-3 col-md-3')
+								label(for='realname',class='control-label') Previous Password
+								input(type='password',class='form-control',name='prev_pw',placeholder='')
+						div(class='row')
+							div(class='form-group col-lg-3 col-md-3')
+								label(class='control-label',for='contact') New Password
+								input(type='password',class='form-control',name='new_pw',placeholder='')
+						div(class='row')
+							div(class='form-group col-lg-3 col-md-3')
+								label(for='address',class='control-label') Confirm New Password 
+								input(type='password',class='form-control',rows='3', name='new_pw_confirm')
+								input(type='hidden',name='username',value=username)
+
+
+
+				button(type='submit',class='btn btn-default',value='Submit') Submit

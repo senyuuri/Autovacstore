@@ -34,10 +34,52 @@ router.get('/',isLoggedIn,function (req, res, next) {
     		if (err) console.log(err);
     		console.log('async-map',rows);
     		staff_act = rows;
-    		res.render('staff', { title: 'Autovacstore', page:'staff', staff_list: staff_list, activity: staff_act});
+    		res.render('staff', { title: 'Autovacstore', page:'staff', staff_list: staff_list, activity: staff_act,message:req.flash('staffMessage')||null});
 		});
 	});
 	
+});
+
+router.get('/delete/:sid',isLoggedIn,function (req, res, next) {
+	var sid = req.params.sid;
+	//console.log('delete_oid........',oid);
+	database.deleteStaffById(sid, function(err,rows){
+		if (err){
+			console.log("Delete",err);
+			req.flash('staffMessage', err);
+	  		res.redirect('/staff');
+		}
+	  	req.flash('staffMessage', 'Delete success.');
+	  	res.redirect('/staff');
+	})
+});
+
+router.get('/pw/:username',isLoggedIn,function (req, res, next) {
+	var username = req.params.username;
+	res.render('staff_pw', { title: 'Autovacstore', page:'settings', message:req.flash('settingMsg'),username:username});
+});
+
+router.post('/pw',urlencodedParser,isLoggedIn,function (req, res, next) {
+	var prev_pw = req.body.prev_pw;
+	var new_pw = req.body.new_pw;
+	var new_pw_confirm = req.body.new_pw_confirm;
+	var username = req.body.username;
+	database.getPasswordHash(username, function(err,hash){
+		if (err) console.log(err);
+		if(prev_pw != hash){
+			req.flash('settingMsg','Wrong Password.');
+			res.redirect('/staff/pw/'+username);
+		}else if(new_pw != new_pw_confirm){
+			req.flash('settingMsg','Password entered are not identical.');
+			res.redirect('/staff/pw/'+username);
+		}else{
+			database.updateUserPassword(username,new_pw,function(err,rows){
+				if (err) console.log(err);
+				req.flash('staffMessage','Password update success.');
+				res.redirect('/staff');
+			});
+		};
+	});
 });
 
 

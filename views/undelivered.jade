@@ -117,7 +117,10 @@ block content
 									td= result[i]['items']
 									td= '$ ' + result[i]['total'].toFixed(2)
 									td= result[i]['customer']
-									td= result[i]['staff']
+									if (result[i]['staff']=="STAFF DELETED")
+										td(class='red')= result[i]['staff']
+									else
+										td= result[i]['staff']
 									td
 										//button(type="button",class="btn btn-default",aria-label="Left Align")
 										span(class="glyphicon glyphicon-pencil edit",aria-hidden="true",clickindex=result[i]['order_id'])
